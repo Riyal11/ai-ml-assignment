@@ -18,11 +18,16 @@ These thresholds must be met before any model artifact is promoted to production
 
 ## Human Review (Qualitative)
 
+Scoring rubric and review protocol: `docs/human_review.md`.
+
 | Criterion | Threshold |
 |-----------|-----------|
 | Correctness (field values match document) | **≥ 85%** on 20-sample manual audit |
 | Faithfulness (no hallucinated fields) | **≥ 90%** |
 | Formatting (strict JSON, no markdown) | **100%** |
+
+**Human review minimum pass rate:** ≥ 80% of 20 samples scoring ≥ 4/6 on the
+combined rubric (correctness + faithfulness + formatting, 0–2 each).
 
 ## CI Quality Gate
 

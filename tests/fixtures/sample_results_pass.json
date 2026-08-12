@@ -1,0 +1,15 @@
+{
+  "run_id": "eval-fixture-pass",
+  "split": "golden",
+  "model_path": "artifacts/adapter",
+  "schema_validity_rate": 0.95,
+  "exact_match": 0.9,
+  "precision_recall_f1": {
+    "precision": 0.92,
+    "recall": 0.91,
+    "f1": 0.9
+  },
+  "relative_benchmark_drop": 0.03,
+  "num_examples": 50,
+  "timestamp": "2026-08-12T12:00:00+00:00"
+}

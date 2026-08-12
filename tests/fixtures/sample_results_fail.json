@@ -1,0 +1,15 @@
+{
+  "run_id": "eval-fixture-fail",
+  "split": "golden",
+  "model_path": "artifacts/adapter",
+  "schema_validity_rate": 0.95,
+  "exact_match": 0.9,
+  "precision_recall_f1": {
+    "precision": 0.78,
+    "recall": 0.76,
+    "f1": 0.8
+  },
+  "relative_benchmark_drop": 0.03,
+  "num_examples": 50,
+  "timestamp": "2026-08-12T12:00:00+00:00"
+}
