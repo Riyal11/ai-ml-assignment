@@ -1,0 +1,74 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+build/
+dist/
+.eggs/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Testing & tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.coverage.*
+coverage.xml
+
+# ML artifacts
+models/
+checkpoints/
+*.pt
+*.pth
+*.bin
+*.onnx
+*.gguf
+*.safetensors
+*.ckpt
+*.mlmodel
+lora/
+adapters/
+
+# Data
+/data/
+*.csv
+*.parquet
+*.jsonl
+*.arrow
+*.db
+*.sqlite3
+
+# Experiment tracking
+mlruns/
+mlflow/
+runs/
+wandb/
+lightning_logs/
+
+# Serving / infra
+*.log
+logs/
+
+# Secrets / local config
+.env
+.env.*
+*.pem
+*.key
+!*.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
