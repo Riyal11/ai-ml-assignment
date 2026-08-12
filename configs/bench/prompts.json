@@ -1,0 +1,62 @@
+[
+  {
+    "id": "en-short-1",
+    "language": "en",
+    "text": "Extract invoice JSON from the following document.\n\nInvoice #INV-001\nVendor: Acme Supplies Ltd.\nDate: 2025-06-15\nLine: Widget A, qty 2, unit price 10.00\nSubtotal: 20.00 | Tax: 4.00 | Total: 24.00 USD",
+    "expected_tokens": 100
+  },
+  {
+    "id": "en-medium-1",
+    "language": "en",
+    "text": "Extract strict JSON matching the invoice schema from this document.\n\nCOMMERCIAL INVOICE\nInvoice Number: INV-2025-0042\nVendor Name: Northwind Traders Inc.\nInvoice Date: 2025-03-22\nBill To: Contoso Manufacturing, 100 Market Street, Seattle WA\nShip To: Contoso Warehouse 7, Portland OR\n\nLine Items:\n1. Industrial bearing set (SKU BRG-440) — Quantity: 12 — Unit Price: 45.50 — Line Total: 546.00\n2. Lubricant cartridge 5L (SKU LUB-09) — Quantity: 6 — Unit Price: 18.75 — Line Total: 112.50\n3. Safety gloves box (SKU SAF-112) — Quantity: 20 — Unit Price: 9.99 — Line Total: 199.80\n\nSubtotal: 858.30\nSales Tax (8.5%): 72.96\nShipping: 35.00\nTotal Amount: 966.26\nCurrency: USD\nPayment Terms: Net 30\nNotes: Please reference PO-77821 on remittance.",
+    "expected_tokens": 500
+  },
+  {
+    "id": "en-long-1",
+    "language": "en",
+    "text": "You are an invoice extraction engine. Return only strict JSON with no markdown.\n\nTAX INVOICE — GLOBAL TECH SOLUTIONS PTE LTD\nRegistered Office: 88 Marina View, #30-01, Singapore 018961 | GST Reg: 201912345M\nInvoice No.: GTS-INV-2025-0917 | Invoice Date: 2025-09-17 | Due Date: 2025-10-17\nCustomer: Horizon Analytics Pte Ltd, 12 Science Park Drive, Singapore 118225\nCustomer GST: 202011223K | PO Reference: PO-HA-2025-441\n\nDescription of Services Rendered (September 2025):\n- Cloud infrastructure management and monitoring (40 hours @ 120.00/hr) = 4,800.00\n- Data pipeline maintenance and incident response (24 hours @ 135.00/hr) = 3,240.00\n- Security patch deployment across 18 production nodes (fixed fee) = 1,500.00\n- On-call support retainer (monthly) = 900.00\n- Additional storage overage 2.4 TB @ 0.08/GB = 196.61\n\nLine Items (structured):\n| # | Description | Qty | Unit Price | Amount |\n| 1 | Cloud infra management | 40 | 120.00 | 4800.00 |\n| 2 | Pipeline maintenance | 24 | 135.00 | 3240.00 |\n| 3 | Security patching | 1 | 1500.00 | 1500.00 |\n| 4 | On-call retainer | 1 | 900.00 | 900.00 |\n| 5 | Storage overage | 2400 | 0.08 | 196.61 |\n\nSubtotal: 10,636.61\nGST (9%): 957.29\nTotal Amount: 11,593.90\nCurrency: SGD\nBank: DBS — Account 123-456789-0 — SWIFT DBSSSGSG\nRemarks: Late payment subject to 1.5% monthly interest. All amounts in Singapore Dollars unless stated otherwise.",
+    "expected_tokens": 1500
+  },
+  {
+    "id": "en-short-2",
+    "language": "en",
+    "text": "Document:\nInvoice 7788 from Blue Ocean Logistics dated 2025-01-10. One line: Freight service, quantity 1, unit price 250.00. Subtotal 250.00, tax 20.00, total 270.00 EUR.",
+    "expected_tokens": 100
+  },
+  {
+    "id": "en-medium-2",
+    "language": "en",
+    "text": "Extract invoice fields into JSON.\n\nVendor: Sterling Paper Co.\nInvoice #: SP-88421\nDate: 2025-07-08\n\nItems:\n- A4 copier paper (5 reams) @ 12.50 = 62.50\n- Toner cartridge HP-410X @ 89.99 = 89.99\n- Stapler heavy-duty @ 24.00 = 24.00\n\nSubtotal: 176.49\nTax: 14.12\nTotal: 190.61\nCurrency: USD\nShipped to: Fabrikam Offices, 200 Main St, Boston MA 02108",
+    "expected_tokens": 500
+  },
+  {
+    "id": "hi-short-1",
+    "language": "hi",
+    "text": "निम्नलिखित दस्तावेज़ से चालान JSON निकालें।\n\nचालान संख्या: INV-HI-001\nविक्रेता: अक्मे आपूर्ति प्रा. लि.\nदिनांक: 2025-06-15\nवस्तु: विजेट ए, मात्रा 2, इकाई मूल्य 10.00\nउप-योग: 20.00 | कर: 4.00 | कुल: 24.00 INR",
+    "expected_tokens": 100
+  },
+  {
+    "id": "hi-medium-1",
+    "language": "hi",
+    "text": "इस चालान से सख्त JSON स्कीमा के अनुसार फ़ील्ड निकालें।\n\nवाणिज्यिक चालान\nचालान संख्या: INV-2025-0888\nविक्रेता नाम: भारत ट्रेडर्स एंड सप्लाई\nचालान दिनांक: 2025-04-18\nग्राहक: कंटोसो मैन्युफैक्चरिंग, मुंबई\n\nपंक्ति वस्तुएं:\n1. औद्योगिक बेयरिंग सेट — मात्रा: 12 — इकाई मूल्य: 450.00 — पंक्ति योग: 5400.00\n2. स्मारक तेल कार्ट्रिज 5L — मात्रा: 6 — इकाई मूल्य: 175.00 — पंक्ति योग: 1050.00\n3. सुरक्षा दस्ताने (बॉक्स) — मात्रा: 20 — इकाई मूल्य: 95.00 — पंक्ति योग: 1900.00\n\nउप-योग: 8350.00\nजीएसटी (18%): 1503.00\nकुल राशि: 9853.00\nमुद्रा: INR\nभुगतान शर्तें: 30 दिन",
+    "expected_tokens": 500
+  },
+  {
+    "id": "hi-long-1",
+    "language": "hi",
+    "text": "आप एक चालान डेटा निष्कर्षण इंजन हैं। केवल सख्त JSON लौटाएं, कोई मार्कडाउन नहीं।\n\nकर चालान — ग्लोबल टेक सॉल्यूशंस प्रा. लि.\nपंजीकृत कार्यालय: 88 मरीना व्यू, नई दिल्ली 110001 | जीएसटी: 07AABCG1234F1Z5\nचालान संख्या: GTS-INV-2025-0917 | दिनांक: 2025-09-17 | देय तिथि: 2025-10-17\nग्राहक: होराइज़न एनालिटिक्स प्रा. लि., गुरुग्राम\nग्राहक जीएसटी: 06AABCH5678G2Z9 | पीओ संदर्भ: PO-HA-2025-441\n\nसेवा विवरण (सितंबर 2025):\n- क्लाउड अवसंरचना प्रबंधन (40 घंटे @ 120.00/घंटा) = 4,800.00\n- डेटा पाइपलाइन रखरखाव (24 घंटे @ 135.00/घंटा) = 3,240.00\n- सुरक्षा पैच तैनाती (18 नोड्स) = 1,500.00\n- ऑन-कॉल सपोर्ट रिटेनर = 900.00\n- अतिरिक्त स्टोरेज 2.4 TB @ 0.08/GB = 196.61\n\nपंक्ति वस्तुएं:\n| क्र. | विवरण | मात्रा | इकाई मूल्य | राशि |\n| 1 | क्लाउड प्रबंधन | 40 | 120.00 | 4800.00 |\n| 2 | पाइपलाइन रखरखाव | 24 | 135.00 | 3240.00 |\n| 3 | सुरक्षा पैच | 1 | 1500.00 | 1500.00 |\n| 4 | ऑन-कॉल रिटेनर | 1 | 900.00 | 900.00 |\n| 5 | स्टोरेज ओवरेज | 2400 | 0.08 | 196.61 |\n\nउप-योग: 10,636.61\nजीएसटी (18%): 1,914.59\nकुल राशि: 12,551.20\nमुद्रा: INR\nबैंक: SBI — खाता 12345678901 — IFSC SBIN0001234\nटिप्पणी: विलंबित भुगतान पर 1.5% मासिक ब्याज लागू।",
+    "expected_tokens": 1500
+  },
+  {
+    "id": "hi-short-2",
+    "language": "hi",
+    "text": "दस्तावेज़:\nचालान 7788, विक्रेता नीला समुद्र लॉजिस्टिक्स, दिनांक 2025-01-10। एक पंक्ति: माल ढुलाई सेवा, मात्रा 1, इकाई मूल्य 250.00। उप-योग 250.00, कर 20.00, कुल 270.00 INR।",
+    "expected_tokens": 100
+  },
+  {
+    "id": "hi-medium-2",
+    "language": "hi",
+    "text": "चालान फ़ील्ड JSON में निकालें।\n\nविक्रेता: स्टर्लिंग पेपर कंपनी\nचालान #: SP-88421\nदिनांक: 2025-07-08\n\nवस्तुएं:\n- A4 कॉपीर पेपर (5 रीम) @ 12.50 = 62.50\n- टोनर कार्ट्रिज HP-410X @ 89.99 = 89.99\n- स्टेपलर हेवी-ड्यूटी @ 24.00 = 24.00\n\nउप-योग: 176.49\nकर: 14.12\nकुल: 190.61\nमुद्रा: INR\nशिपिंग पता: फैब्रिकम ऑफिस, मुंबई 400001",
+    "expected_tokens": 500
+  }
+]
