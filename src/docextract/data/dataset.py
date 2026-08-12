@@ -1,7 +1,7 @@
 """Dataset split management and train/eval path isolation."""
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 
 DATA_ROOT = Path(__file__).resolve().parents[3] / "data"
@@ -12,17 +12,13 @@ TRAIN_ROOTS = (
 )
 
 
-class Split(str, Enum):
+class Split(StrEnum):
     """Dataset split identifiers."""
 
     TRAIN = "train"
     VALIDATION = "validation"
     GOLDEN = "golden"
     BENCHMARK = "benchmark"
-
-    def __str__(self) -> str:
-        """Return the enum value when formatted as a string."""
-        return self.value
 
 
 @dataclass(frozen=True)
@@ -36,9 +32,7 @@ class DocumentRecord:
     split: Split
 
 
-def guard_train_path(
-    path: Path, roots: tuple[Path, ...] | None = None
-) -> Path:
+def guard_train_path(path: Path, roots: tuple[Path, ...] | None = None) -> Path:
     """Resolve ``path`` and reject anything outside the allowed train roots.
 
     Uses ``Path.resolve()`` (which also resolves symlinks) and a
@@ -62,9 +56,7 @@ def guard_train_path(
 def validate_train_split(split: Split) -> None:
     """Raise if ``split`` is not allowed in the training pipeline."""
     if split in (Split.GOLDEN, Split.BENCHMARK):
-        raise ValueError(
-            f"split {split.value!r} is reserved and must not be used for training"
-        )
+        raise ValueError(f"split {split.value!r} is reserved and must not be used for training")
 
 
 def validate_eval_split(split: Split) -> None:

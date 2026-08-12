@@ -14,7 +14,6 @@ from pydantic import (
     ValidationInfo,
     field_validator,
 )
-
 from pydantic_core import PydanticCustomError
 
 INVOICE_DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -120,6 +119,7 @@ class Invoice(BaseModel):
         value = value.strip()
         if not CURRENCY_PATTERN.fullmatch(value):
             raise ValueError(
-                f"currency must be 3 uppercase ASCII letters, got {value!r} (field {info.field_name})"
+                f"currency must be 3 uppercase ASCII letters, got {value!r} "
+                f"(field {info.field_name})"
             )
         return value
