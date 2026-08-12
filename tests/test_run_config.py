@@ -5,7 +5,7 @@ from datetime import datetime
 import pytest
 from pydantic import ValidationError
 
-from docextract.train.run_config import RunConfig, validate_mandatory_fields
+from docextract.train.run_config import RunConfig, run_config_to_dict, validate_mandatory_fields
 
 
 def valid_config_fields() -> dict[str, object]:
@@ -99,3 +99,13 @@ def test_run_id_preserved_when_given() -> None:
 def test_output_dir_default() -> None:
     config = RunConfig(**valid_config_fields())
     assert str(config.output_dir) == "artifacts"
+
+
+def test_run_config_to_dict() -> None:
+    fields = valid_config_fields()
+    fields["run_id"] = "run-123"
+    config = RunConfig(**fields)
+    result = run_config_to_dict(config)
+    assert result["run_id"] == "run-123"
+    assert result["target_modules"] == "q_proj,k_proj"
+    assert result["method"] == "lora"
