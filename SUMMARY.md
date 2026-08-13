@@ -29,7 +29,7 @@ docextract assignment.
 
 ## Known weak spots
 
-- **QLoRA adapter wiring was broken (pre-training audit)** — `trainer.py` skipped `get_peft_model()` on the QLoRA path; fixed in pre-training bugfix commit. First real QLoRA run still pending to validate end-to-end.
+- **QLoRA on 8 GB GPUs** — requires pinning `device_map={"": 0}` and closing other VRAM consumers; `device_map="auto"` can CPU-offload and break BnB 4-bit training.
 - **`InferenceService` is a stub** — returns dummy JSON; no real HF/GGUF weight load in the API path yet.
 - **Dataset loaders raise `NotImplementedError`** — `load_train_dataset` / `load_eval_dataset` wait on finalized on-disk format.
 - **Evaluation pipeline uses stub predictions** — `_stub_predict` returns `{}`, so metrics are structural only until inference is wired.

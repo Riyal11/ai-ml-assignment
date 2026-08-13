@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from docextract.data.dataset import Split, validate_eval_split
+from docextract.eval.inference import load_predictor, resolve_adapter_path
 from docextract.eval.metrics import (
     compute_exact_match,
     compute_precision_recall_f1,
@@ -39,11 +40,21 @@ def _stub_predict(record: dict[str, Any]) -> dict[str, Any]:
     return {}
 
 
+def _use_stub_inference(model_path: Path, use_stub: bool | None) -> bool:
+    if use_stub is not None:
+        return use_stub
+    adapter_dir = resolve_adapter_path(model_path)
+    return not (adapter_dir / "adapter_config.json").is_file()
+
+
 def run_evaluation(
     model_path: Path,
     dataset_path: Path,
     output_dir: Path,
     split: Split,
+    *,
+    use_stub: bool | None = None,
+    local_files_only: bool = False,
 ) -> Path:
     """Run the evaluation pipeline and write ``results.json``.
 
@@ -58,7 +69,16 @@ def run_evaluation(
     """
     validate_eval_split(split)
     records = _load_records(dataset_path)
-    predictions = [_stub_predict(record) for record in records]
+    if _use_stub_inference(model_path, use_stub):
+        logger.warning("Using stub inference for model path %s", model_path)
+        predictions = [_stub_predict(record) for record in records]
+    else:
+        predictor = load_predictor(model_path, local_files_only=local_files_only)
+        predictions: list[dict[str, Any]] = []
+        for index, record in enumerate(records, start=1):
+            predictions.append(predictor.predict(record))
+            if index == 1 or index % 5 == 0 or index == len(records):
+                logger.info("Inference progress: %d/%d", index, len(records))
 
     schema_validity_rate = compute_schema_validity_rate(predictions)
 

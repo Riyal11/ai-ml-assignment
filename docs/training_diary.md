@@ -122,3 +122,23 @@ Examined failed PDFs manually — they are empty placeholder/stub files. Filenam
 - Trainable params: **~8.4M** (0.21% of total)
 
 **Notes:** Validates pre-training bugfixes (QLoRA `get_peft_model`, CUDA torch, `device_map`, MLflow logging, extraction→SFT auto-convert). First successful end-to-end training run.
+
+### Hindi Sanity Check (Post Run-001)
+
+Post-training evaluation on golden and synthetic Hindi sets (`scripts/evaluate.py`, adapter at `artifacts/run-001`).
+
+| Set | Examples | Schema | EM | F1 |
+|-----|----------|--------|-----|-----|
+| Synthetic Hindi (`data/golden/hindi_test.jsonl`) | 5 | **100%** | **0.97** | **0.96** |
+| English golden (`data/golden/invoices.jsonl`) | 50 | **100%** | **0.74** | **0.72** |
+
+**Findings**
+
+- Hindi performance is **strong** on simple synthetic inputs.
+- Gap is **not language-based** — it is **complexity-based**.
+- English golden set has harder cases: multiple line items, discounts, shipping.
+- Model learned the schema pattern; struggles with exact value extraction on complex invoices.
+- No Hindi training data needed for this assignment.
+- Qwen3-4B base model handles Devanagari via pretraining.
+
+**Next steps:** Focus improvement on English complexity via more epochs / higher rank.

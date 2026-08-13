@@ -1,7 +1,6 @@
 """End-to-end LoRA/QLoRA/DoRA fine-tuning entrypoint with mandatory logging."""
 
 import csv
-import json
 import logging
 import time
 from pathlib import Path
@@ -12,6 +11,7 @@ from peft import get_peft_model, prepare_model_for_kbit_training
 from transformers import AutoModelForCausalLM
 from trl import SFTConfig, SFTTrainer  # type: ignore[attr-defined]
 
+from docextract.data.format_sft import load_sft_examples_from_jsonl
 from docextract.data.tokenizer_utils import (
     apply_chat_template,
     load_tokenizer,
@@ -44,21 +44,20 @@ def _append_hyperparameter_row(row: dict[str, Any]) -> None:
     """Append one row to the append-only hyperparameter CSV log."""
     _HYPERPARAM_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
     write_header = not _HYPERPARAM_LOG_PATH.exists()
+    filtered = {col: row.get(col) for col in _HYPERPARAM_LOG_COLUMNS}
     with _HYPERPARAM_LOG_PATH.open("a", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=_HYPERPARAM_LOG_COLUMNS)
         if write_header:
             writer.writeheader()
-        writer.writerow(row)
+        writer.writerow(filtered)
 
 
 def _load_and_format_dataset(dataset_path: Path, tokenizer: Any) -> Dataset:
-    """Load JSONL chat examples and render each to a plain ``text`` string."""
-    records: list[dict[str, Any]] = []
-    with dataset_path.open(encoding="utf-8") as f:
-        for line in f:
-            if line.strip():
-                records.append(json.loads(line))
-    texts = [apply_chat_template(example["messages"], tokenizer) for example in records]
+    """Load SFT or extraction JSONL and render each example to a ``text`` string."""
+    examples = load_sft_examples_from_jsonl(dataset_path)
+    if not examples:
+        raise ValueError(f"no training examples found in {dataset_path}")
+    texts = [apply_chat_template(example["messages"], tokenizer) for example in examples]
     return Dataset.from_dict({"text": texts})
 
 
@@ -97,6 +96,19 @@ def _peak_gpu_mem_mb() -> int | None:
     if torch.cuda.is_available():
         return int(torch.cuda.max_memory_allocated() // (1024 * 1024))
     return None
+
+
+def _qlora_device_map() -> dict[str, int]:
+    """Return a single-GPU device map for QLoRA (BnB 4-bit cannot train with CPU offload)."""
+    import torch
+
+    if not torch.cuda.is_available():
+        msg = "QLoRA requires a CUDA GPU; torch.cuda.is_available() is False"
+        raise RuntimeError(msg)
+    device_name = torch.cuda.get_device_name(0)
+    total_gb = torch.cuda.get_device_properties(0).total_memory / (1024**3)
+    logger.info("QLoRA device: %s (%.1f GiB total)", device_name, total_gb)
+    return {"": 0}
 
 
 def run_training(config: RunConfig, dataset_path: Path) -> Path:
@@ -138,9 +150,11 @@ def run_training(config: RunConfig, dataset_path: Path) -> Path:
             config.method,
             config.base_model,
         )
-        with mlflow.start_run(run_name=config.run_id) as run:
-            run.log_param("custom_run_id", config.run_id)
-            run.log_params({k: v for k, v in run_config_to_dict(config).items() if v is not None})
+        with mlflow.start_run(run_name=config.run_id):
+            mlflow.log_param("custom_run_id", config.run_id)
+            mlflow.log_params(
+                {k: v for k, v in run_config_to_dict(config).items() if v is not None}
+            )
 
             tokenizer = load_tokenizer(config.base_model)
             adapter_config = get_adapter_config(config)
@@ -150,6 +164,7 @@ def run_training(config: RunConfig, dataset_path: Path) -> Path:
             if config.method == "qlora":
                 qlora_lora_config, bnb_config = get_qlora_config(config)
                 model_kwargs["quantization_config"] = bnb_config
+                model_kwargs["device_map"] = _qlora_device_map()
 
             model: Any = AutoModelForCausalLM.from_pretrained(
                 config.base_model, revision=_REVISION, **model_kwargs
@@ -198,7 +213,7 @@ def run_training(config: RunConfig, dataset_path: Path) -> Path:
             train_time_sec = time.monotonic() - run_started
             peak_mem_mb = _peak_gpu_mem_mb()
 
-            run.log_metrics(
+            mlflow.log_metrics(
                 {
                     "train_time_sec": train_time_sec,
                     "peak_gpu_mem_mb": float(peak_mem_mb or 0.0),

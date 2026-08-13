@@ -1,0 +1,14 @@
+method: qlora
+r: 16
+alpha: 32
+target_modules: [q_proj, k_proj, v_proj, o_proj]
+learning_rate: 0.00015
+lr_scheduler_type: cosine
+max_seq_length: 512
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 8
+num_train_epochs: 5
+base_model: Qwen/Qwen3-4B-Instruct-2507
+seed: 42
+torch_dtype: bfloat16
+output_dir: artifacts/run-002

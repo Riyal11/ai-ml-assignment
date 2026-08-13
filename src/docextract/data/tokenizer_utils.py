@@ -11,7 +11,12 @@ logger = logging.getLogger(__name__)
 # Investigate Devanagari token efficiency + whether to pad Hindi prompts.
 
 
-def load_tokenizer(model_id: str, revision: str | None = None) -> PreTrainedTokenizerFast:
+def load_tokenizer(
+    model_id: str,
+    revision: str | None = None,
+    *,
+    local_files_only: bool = False,
+) -> PreTrainedTokenizerFast:
     """Load a fast tokenizer for ``model_id``.
 
     Args:
@@ -26,7 +31,11 @@ def load_tokenizer(model_id: str, revision: str | None = None) -> PreTrainedToke
         ValueError: If the loaded tokenizer is not a fast tokenizer.
     """
     try:
-        tokenizer: Any = AutoTokenizer.from_pretrained(model_id, revision=revision)
+        tokenizer: Any = AutoTokenizer.from_pretrained(
+            model_id,
+            revision=revision,
+            local_files_only=local_files_only,
+        )
     except OSError:
         logger.exception("Failed to load tokenizer for %s", model_id)
         raise

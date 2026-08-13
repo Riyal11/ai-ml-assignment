@@ -5,7 +5,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from docextract.data.dataset import DocumentRecord
+from docextract.data.dataset import DocumentRecord, Split
 from docextract.data.validation import load_json_schema
 
 logger = logging.getLogger(__name__)
@@ -36,6 +36,23 @@ def _system_instructions(language: str) -> str:
         f"{language_hint}\n"
         f"{_OUTPUT_RULES}"
     )
+
+
+def build_inference_messages(document_text: str, language: str) -> list[dict[str, str]]:
+    """Build chat messages for inference (system + user only).
+
+    Args:
+        document_text: Raw source document text.
+        language: Language code of the document (e.g. ``"en"``, ``"hi"``).
+
+    Returns:
+        A two-message list suitable for ``apply_chat_template`` with
+        ``add_generation_prompt=True``.
+    """
+    return [
+        {"role": "system", "content": _system_instructions(language)},
+        {"role": "user", "content": document_text},
+    ]
 
 
 def build_extraction_prompt(document_text: str, language: str) -> str:
@@ -96,3 +113,50 @@ def save_sft_jsonl(examples: list[dict[str, Any]], path: Path) -> None:
         for example in examples:
             f.write(json.dumps(example, ensure_ascii=False) + "\n")
     logger.info("Wrote %d SFT examples to %s", len(examples), path)
+
+
+def document_record_from_dict(raw: dict[str, Any]) -> DocumentRecord:
+    """Parse a JSON object from extraction JSONL into a ``DocumentRecord``."""
+    return DocumentRecord(
+        example_id=str(raw["example_id"]),
+        document=str(raw["document"]),
+        target=raw["target"],
+        language=str(raw.get("language", "en")),
+        split=Split(str(raw.get("split", Split.TRAIN))),
+    )
+
+
+def sft_example_from_dict(raw: dict[str, Any]) -> dict[str, Any]:
+    """Normalize one JSONL row to an SFT example with a ``messages`` key."""
+    if "messages" in raw:
+        return raw
+    if "document" in raw and "target" in raw:
+        return format_sft_example(document_record_from_dict(raw))
+    msg = (
+        "JSONL row must contain either 'messages' (SFT format) or "
+        "'document'+'target' (extraction format); "
+        f"got keys: {sorted(raw)}"
+    )
+    raise ValueError(msg)
+
+
+def load_sft_examples_from_jsonl(path: Path) -> list[dict[str, Any]]:
+    """Load SFT or extraction JSONL and return chat-formatted examples."""
+    examples: list[dict[str, Any]] = []
+    with path.open(encoding="utf-8") as handle:
+        for line_no, line in enumerate(handle, start=1):
+            if not line.strip():
+                continue
+            raw = json.loads(line)
+            try:
+                examples.append(sft_example_from_dict(raw))
+            except ValueError as exc:
+                raise ValueError(f"{path}:{line_no}: {exc}") from exc
+    return examples
+
+
+def convert_extraction_jsonl_to_sft(input_path: Path, output_path: Path) -> int:
+    """Convert extraction JSONL rows to SFT ``messages`` JSONL."""
+    examples = load_sft_examples_from_jsonl(input_path)
+    save_sft_jsonl(examples, output_path)
+    return len(examples)
