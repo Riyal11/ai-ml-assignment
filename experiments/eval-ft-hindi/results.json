@@ -1,0 +1,14 @@
+{
+  "run_id": "eval-20260813-095401",
+  "split": "golden",
+  "model_path": "artifacts\\run-001\\final",
+  "schema_validity_rate": 1.0,
+  "exact_match": 0.9714285714285713,
+  "precision_recall_f1": {
+    "precision": 0.96,
+    "recall": 0.96,
+    "f1": 0.96
+  },
+  "num_examples": 5,
+  "timestamp": "2026-08-13T09:54:01.918111+00:00"
+}

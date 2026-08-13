@@ -59,3 +59,66 @@ Examined failed PDFs manually — they are empty placeholder/stub files. Filenam
 - **Change**: `trainer.py` — after `prepare_model_for_kbit_training`, wrap with `get_peft_model(model, lora_config)` using `get_qlora_config(config)[0]`; switch to `mlflow.start_run(run_name=...)` and log `custom_run_id`; ensure `experiments/` exists and write CSV header when file is new; add training start/finish log lines.
 - **Follow-up Run ID**: N/A for pre-training (first QLoRA run will validate)
 - **Status**: resolved
+
+### Run ID: 20260813-124018-qlora
+- **Category**: bugfix
+- **Observed**: First QLoRA training attempt crashed immediately: `AttributeError: 'ActiveRun' object has no attribute 'log_param'` at `trainer.py:142`. CSV fallback also failed: `dict contains fields not in fieldnames: 'output_dir'`.
+- **Diagnosis**: MLflow 3.15 `ActiveRun` context object no longer exposes `log_param`/`log_params`/`log_metrics` (verified via `dir(ActiveRun)` — empty). Module-level `mlflow.log_param()` still works. Hyperparameter CSV columns omit `output_dir` but `run_config_to_dict()` includes it in the `finally` row.
+- **Change**: `trainer.py` — use `mlflow.log_param` / `mlflow.log_params` / `mlflow.log_metrics` inside the active run; filter CSV rows to `_HYPERPARAM_LOG_COLUMNS` only before `writerow`.
+- **Follow-up Run ID**: next QLoRA retry after fix
+- **Status**: resolved
+
+### Run ID: 20260813-124714-qlora
+- **Category**: instability
+- **Observed**: QLoRA run failed at `AutoModelForCausalLM.from_pretrained` with `ValueError: Some modules are dispatched on the CPU or the disk` (bitsandbytes 4-bit quantizer). Model weights were already cached locally (`~/.cache/huggingface/hub/models--Qwen--Qwen3-4B-Instruct-2507`, ~7 GB).
+- **Diagnosis**: Not a download issue. `trainer.py` used `device_map="auto"`, which on an 8 GB RTX 4060 offloads some layers to CPU when VRAM is tight. BnB 4-bit QLoRA requires the full quantized model on GPU during training — CPU/disk dispatch is rejected.
+- **Change**: `trainer.py` — use `device_map={"": 0}` for QLoRA when CUDA is available; fail fast with a clear error if CUDA is missing. `lora_config.py` — enable `bnb_4bit_use_double_quant=True` to reduce VRAM footprint on 8 GB cards.
+- **Follow-up Run ID**: next QLoRA retry after fix
+- **Status**: resolved
+
+### Run ID: 20260813-125200-qlora
+- **Category**: instability
+- **Observed**: `uv run python -c "import torch; ... get_device_name(0)"` raised `AssertionError: Torch not compiled with CUDA enabled`. Installed wheel is `torch==2.13.0+cpu`.
+- **Diagnosis**: Default PyPI `torch` resolves to CPU-only on Windows. QLoRA/bitsandbytes require a CUDA build (`+cu124`). GPU hardware is fine; Python environment is wrong.
+- **Change**: `pyproject.toml` — pin `torch` to PyTorch CUDA 12.4 index via `[tool.uv.sources]`; reinstall with `uv sync --reinstall-package torch`.
+- **Follow-up Run ID**: verify `torch.cuda.is_available()` is True, then retry QLoRA training
+- **Status**: resolved
+
+### Run ID: 20260813-125831-qlora
+- **Category**: structured-output
+- **Observed**: QLoRA run loaded the model on GPU, then failed with `KeyError: 'messages'` in `_load_and_format_dataset` when using `data/train/invoices.jsonl`.
+- **Diagnosis**: Extraction JSONL uses `document`/`target` fields; trainer expected pre-formatted SFT chat JSONL with `messages`. Model download and CUDA were fine.
+- **Change**: `format_sft.py` — add `sft_example_from_dict` / `load_sft_examples_from_jsonl` to accept both formats; `trainer.py` — use loader with auto-conversion; add `scripts/prepare_sft.py` to materialize `data/train/sft.jsonl`.
+- **Follow-up Run ID**: retry training with `invoices.jsonl` (auto-convert) or `sft.jsonl`
+- **Status**: resolved
+
+## Training Runs
+
+### Run 001: First QLoRA Training — SUCCESS
+
+| Setting | Value |
+|---------|-------|
+| **Method** | QLoRA |
+| **Base model** | `Qwen/Qwen3-4B-Instruct-2507` |
+| **LoRA** | r=8, alpha=16, target_modules=`[q_proj, k_proj, v_proj, o_proj]` |
+| **Optimizer** | LR=0.0002, scheduler=cosine |
+| **Sequence / batch** | seq len=512, batch=1, grad_accum=8 |
+| **Epochs** | 3 |
+| **Hardware** | RTX 4060 Laptop 8GB |
+| **Config** | `configs/train/qlora_rtx4060.yaml` |
+| **Output** | `artifacts/run-001` |
+
+**Dataset**
+
+- 830 English SuperStore invoices (`data/train/invoices.jsonl`)
+- 0 Hindi (source dataset limitation)
+
+**Results**
+
+- Training time: **3,769s** (~1h 3min)
+- No OOM, no instability
+- Final `train_loss`: **0.2885**
+- Token accuracy: **94.24%**
+- Trainable params: **~8.4M** (0.21% of total)
+
+**Notes:** Validates pre-training bugfixes (QLoRA `get_peft_model`, CUDA torch, `device_map`, MLflow logging, extraction→SFT auto-convert). First successful end-to-end training run.
