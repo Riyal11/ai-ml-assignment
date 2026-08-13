@@ -2,3 +2,4 @@ run_id,method,r,alpha,target_modules,learning_rate,lr_scheduler_type,max_seq_len
 20260813-124714-qlora,qlora,8,16,"q_proj,k_proj,v_proj,o_proj",0.0002,cosine,512,1,8,3.0,Qwen/Qwen3-4B-Instruct-2507,42,bfloat16,,,,,failed,
 20260813-125831-qlora,qlora,8,16,"q_proj,k_proj,v_proj,o_proj",0.0002,cosine,512,1,8,3.0,Qwen/Qwen3-4B-Instruct-2507,42,bfloat16,5898240,2211708416,,,failed,
 20260813-130808-qlora,qlora,8,16,"q_proj,k_proj,v_proj,o_proj",0.0002,cosine,512,1,8,3.0,Qwen/Qwen3-4B-Instruct-2507,42,bfloat16,5898240,2211708416,3792.9679999999935,4815,succeeded,
+20260813-153345-qlora,qlora,16,32,"q_proj,k_proj,v_proj,o_proj",0.00015,cosine,512,1,8,5.0,Qwen/Qwen3-4B-Instruct-2507,42,bfloat16,11796480,2217606656,6251.921000000002,4860,succeeded,

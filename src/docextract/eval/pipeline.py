@@ -7,8 +7,9 @@ from pathlib import Path
 from typing import Any
 
 from docextract.data.dataset import Split, validate_eval_split
-from docextract.eval.inference import load_predictor, resolve_adapter_path
+from docextract.eval.inference import is_loadable_model, load_predictor
 from docextract.eval.metrics import (
+    SCALAR_FIELDS,
     compute_exact_match,
     compute_precision_recall_f1,
     compute_schema_validity_rate,
@@ -43,8 +44,29 @@ def _stub_predict(record: dict[str, Any]) -> dict[str, Any]:
 def _use_stub_inference(model_path: Path, use_stub: bool | None) -> bool:
     if use_stub is not None:
         return use_stub
-    adapter_dir = resolve_adapter_path(model_path)
-    return not (adapter_dir / "adapter_config.json").is_file()
+    return not is_loadable_model(model_path)
+
+
+def _aggregate_field_metrics(
+    records: list[dict[str, Any]],
+    predictions: list[dict[str, Any]],
+) -> dict[str, dict[str, float]]:
+    """Micro-average per-field precision/recall/F1 across all examples."""
+    fields = (*SCALAR_FIELDS, "line_items")
+    totals = {field: {"precision": 0.0, "recall": 0.0, "f1": 0.0} for field in fields}
+    n = len(records)
+    if n == 0:
+        return totals
+    for record, pred in zip(records, predictions, strict=True):
+        prf = compute_precision_recall_f1(pred, record.get("target", {}))
+        for field in fields:
+            totals[field]["precision"] += prf[field]["precision"]
+            totals[field]["recall"] += prf[field]["recall"]
+            totals[field]["f1"] += prf[field]["f1"]
+    return {
+        field: {metric: value / n for metric, value in scores.items()}
+        for field, scores in totals.items()
+    }
 
 
 def run_evaluation(
@@ -74,7 +96,7 @@ def run_evaluation(
         predictions = [_stub_predict(record) for record in records]
     else:
         predictor = load_predictor(model_path, local_files_only=local_files_only)
-        predictions: list[dict[str, Any]] = []
+        predictions = []
         for index, record in enumerate(records, start=1):
             predictions.append(predictor.predict(record))
             if index == 1 or index % 5 == 0 or index == len(records):
@@ -103,6 +125,7 @@ def run_evaluation(
         "schema_validity_rate": schema_validity_rate,
         "exact_match": em_mean,
         "precision_recall_f1": {"precision": p_mean, "recall": r_mean, "f1": f1_mean},
+        "field_precision_recall_f1": _aggregate_field_metrics(records, predictions),
         "num_examples": n,
         "timestamp": now.isoformat(),
     }
