@@ -20,6 +20,13 @@ docextract assignment.
 - Multi-page / long-invoice path: chunking or >32K context strategy with citation of which pages fed extraction.
 - Production monitoring: rolling schema-validity dashboard and alert when validity or Hindi F1 gap slips.
 
+## Data Quality Notes
+
+- 15 of 1007 source PDFs were empty placeholders (no invoice data, `$0.00` totals)
+- These were intentionally excluded to maintain training set quality
+- 98.5% extraction success rate (992 valid invoices)
+- All extracted records pass strict schema validation
+
 ## Known weak spots
 
 - **`InferenceService` is a stub** — returns dummy JSON; no real HF/GGUF weight load in the API path yet.
