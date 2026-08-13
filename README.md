@@ -30,7 +30,7 @@ uv run python scripts/train.py \
 
 QLoRA defaults: `configs/train/qlora_default.yaml`. Override flags: `--method`, `--r`, `--alpha`, `--lr`, `--epochs`, `--base-model`, `--output-dir`.
 
-Base model default: `Qwen/Qwen3-4B-Instruct` (see `docs/model_selection_memo.md`).
+Base model default: `Qwen/Qwen3-4B-Instruct-2507` (see `docs/model_selection_memo.md`).
 
 ## Evaluation
 
@@ -110,4 +110,4 @@ experiments/        # hyperparameter log, eval/bench results
 
 ## License
 
-Code in this repository is intended for the assignment submission under the same open-use spirit as the base model: **Apache 2.0** (`Qwen/Qwen3-4B-Instruct`). See `docs/model_card.md` for model license and usage caveats.
+Code in this repository is intended for the assignment submission under the same open-use spirit as the base model: **Apache 2.0** (`Qwen/Qwen3-4B-Instruct-2507`). See `docs/model_card.md` for model license and usage caveats.

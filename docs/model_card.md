@@ -10,7 +10,7 @@ complete.
 | Property | Value |
 |----------|-------|
 | **Model name** | docextract-Qwen3-4B-Invoice |
-| **Base model** | [Qwen/Qwen3-4B-Instruct](https://huggingface.co/Qwen/Qwen3-4B-Instruct) |
+| **Base model** | [Qwen/Qwen3-4B-Instruct-2507](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507) |
 | **Fine-tuning method** | LoRA / QLoRA via PEFT + TRL (`SFTTrainer`) |
 | **Model type** | Causal language model, instruction-tuned |
 | **Parameters** | ~3.8B base; trainable adapter params logged per run |

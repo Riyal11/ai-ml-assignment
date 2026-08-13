@@ -66,7 +66,7 @@ class RunConfig:
     num_train_epochs: float | None = Field(gt=0)
 
     run_id: str | None = None
-    base_model: str = "Qwen/Qwen3-4B-Instruct"
+    base_model: str = "Qwen/Qwen3-4B-Instruct-2507"
     seed: int = 42
     torch_dtype: str = "bfloat16"
     trainable_params: int | None = None

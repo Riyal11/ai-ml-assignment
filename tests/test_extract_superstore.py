@@ -12,6 +12,7 @@ from docextract.data.dataset import Split
 from docextract.data.superstore_extractor import (
     normalize_invoice_date,
     parse_line_items_from_table,
+    parse_line_items_from_text,
     parse_money,
     parse_superstore_invoice_text,
     to_schema_target,
@@ -152,6 +153,32 @@ def test_parse_line_items_from_table() -> None:
     assert items[0]["description"] == "Staples"
     assert items[0]["quantity"] == 3
     assert items[0]["unit_price"] == 4.17
+
+
+def test_parse_line_items_from_text_single_space_multi_word_description() -> None:
+    text = """
+SuperStore
+Product Name Quantity Rate Amount
+Hon Office Chair 2 $150.00 $300.00
+Subtotal: $300.00
+"""
+    items = parse_line_items_from_text(text)
+    assert len(items) == 1
+    assert items[0]["description"] == "Hon Office Chair"
+    assert items[0]["quantity"] == 2
+    assert items[0]["unit_price"] == 150.0
+
+
+def test_parse_line_items_from_text_double_space_multi_word_description() -> None:
+    text = """
+SuperStore
+Product Name    Quantity    Rate    Amount
+Hon Office Chair    2    $150.00    $300.00
+Subtotal: $300.00
+"""
+    items = parse_line_items_from_text(text)
+    assert len(items) == 1
+    assert items[0]["description"] == "Hon Office Chair"
 
 
 def test_assign_splits_is_deterministic() -> None:

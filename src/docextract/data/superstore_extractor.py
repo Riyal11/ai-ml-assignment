@@ -49,6 +49,12 @@ _COMPACT_DATE_PATTERN = re.compile(r"^([A-Za-z]{3})(\d{2})(\d{4})$")
 _DESCRIPTION_HEADERS = ("product name", "item", "description", "item/product name")
 _QUANTITY_HEADERS = ("quantity", "qty")
 _UNIT_PRICE_HEADERS = ("rate", "unit cost", "unit price", "rate/unit cost")
+_LINE_ITEM_TRAILING = re.compile(
+    r"^(?P<description>.+?)\s+"
+    r"(?P<quantity>\d+)\s+"
+    r"(?P<unit_price>\$?[\d,]+(?:\.\d+)?)\s+"
+    r"(?P<amount>\$?[\d,]+(?:\.\d+)?)\s*$"
+)
 
 
 @dataclass(frozen=True)
@@ -86,6 +92,37 @@ def parse_money(value: str) -> Decimal:
         return Decimal(cleaned)
     except InvalidOperation as exc:
         raise ValueError(f"invalid money value: {value!r}") from exc
+
+
+def _parse_quantity(value: str) -> int:
+    """Parse a quantity column value into an integer."""
+    cleaned = value.strip().replace(",", "")
+    if not cleaned.isdigit():
+        raise ValueError(f"invalid quantity value: {value!r}")
+    return int(cleaned)
+
+
+def _parse_line_item_row(
+    description: str,
+    quantity_raw: str,
+    unit_price_raw: str,
+) -> dict[str, Any] | None:
+    """Parse one line-item row, returning ``None`` when the row is invalid."""
+    description = description.strip()
+    if not description:
+        return None
+    if description.lower() in {"subtotal", "total", "shipping", "discount"}:
+        return None
+    try:
+        quantity = _parse_quantity(quantity_raw)
+        unit_price = parse_money(unit_price_raw)
+    except ValueError:
+        return None
+    return {
+        "description": description,
+        "quantity": quantity,
+        "unit_price": float(unit_price),
+    }
 
 
 def normalize_invoice_date(raw: str) -> str:
@@ -154,17 +191,9 @@ def parse_line_items_from_table(table: list[list[str | None]]) -> list[dict[str,
         unit_price_raw = (row[price_idx] or "").strip()
         if not description or not quantity_raw or not unit_price_raw:
             continue
-        if description.lower() in {"subtotal", "total", "shipping", "discount"}:
-            continue
-        quantity = int(parse_money(quantity_raw))
-        unit_price = parse_money(unit_price_raw)
-        items.append(
-            {
-                "description": description,
-                "quantity": quantity,
-                "unit_price": float(unit_price),
-            }
-        )
+        item = _parse_line_item_row(description, quantity_raw, unit_price_raw)
+        if item is not None:
+            items.append(item)
     return items
 
 
@@ -187,29 +216,29 @@ def parse_line_items_from_text(text: str) -> list[dict[str, Any]]:
         lowered = line.lower()
         if lowered.startswith(("subtotal", "discount", "shipping", "total", "balance due")):
             break
-        parts = re.split(r"\s{2,}|\t+", line)
-        if len(parts) < 4:
-            parts = line.split()
-            if len(parts) < 4:
-                continue
-            description = " ".join(parts[:-3])
-            quantity_raw, unit_price_raw, _amount_raw = parts[-3:]
-        else:
-            description = parts[0].strip()
-            quantity_raw = parts[1].strip()
-            unit_price_raw = parts[2].strip()
 
-        if not description:
+        description: str | None = None
+        quantity_raw: str | None = None
+        unit_price_raw: str | None = None
+
+        parts = re.split(r"\s{2,}|\t+", line)
+        if len(parts) >= 4:
+            description = " ".join(part.strip() for part in parts[:-3])
+            quantity_raw = parts[-3].strip()
+            unit_price_raw = parts[-2].strip()
+        else:
+            match = _LINE_ITEM_TRAILING.match(line)
+            if match:
+                description = match.group("description")
+                quantity_raw = match.group("quantity")
+                unit_price_raw = match.group("unit_price")
+
+        if description is None or quantity_raw is None or unit_price_raw is None:
             continue
-        quantity = int(parse_money(quantity_raw))
-        unit_price = parse_money(unit_price_raw)
-        items.append(
-            {
-                "description": description,
-                "quantity": quantity,
-                "unit_price": float(unit_price),
-            }
-        )
+
+        item = _parse_line_item_row(description, quantity_raw, unit_price_raw)
+        if item is not None:
+            items.append(item)
     return items
 
 
@@ -290,9 +319,9 @@ def parse_superstore_invoice_text(
     line_items: list[dict[str, Any]] = []
     if tables:
         for table in tables:
-            line_items = parse_line_items_from_table(table)
-            if line_items:
-                break
+            parsed_items = parse_line_items_from_table(table)
+            if parsed_items:
+                line_items.extend(parsed_items)
     if not line_items:
         line_items = parse_line_items_from_text(text)
     if not line_items:
