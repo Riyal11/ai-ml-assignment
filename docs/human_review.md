@@ -89,7 +89,7 @@ Set `disagreement_flag = yes` when:
 |-----------|-------|
 | Mean human score (0–5) | **3.25** |
 | Perfect extractions (5/5) | **6/20 (30%)** |
-| Pass rate threshold (≥ 80% scoring ≥ 3/5) | **Not met** (only 30% score ≥ 4/5) |
+| Pass rate threshold (≥ 80% scoring ≥ 3/5) | **Not met** (65% score ≥ 3/5) |
 | Primary failure mode | `vendor_name` confusion (product brand vs issuer) |
 | Secondary failure mode | Hallucinated category-code line items with 0 `unit_price` |
 
