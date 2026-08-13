@@ -51,7 +51,7 @@ def _aggregate_field_metrics(
     records: list[dict[str, Any]],
     predictions: list[dict[str, Any]],
 ) -> dict[str, dict[str, float]]:
-    """Micro-average per-field precision/recall/F1 across all examples."""
+    """Macro-average per-field across examples precision/recall/F1."""
     fields = (*SCALAR_FIELDS, "line_items")
     totals = {field: {"precision": 0.0, "recall": 0.0, "f1": 0.0} for field in fields}
     n = len(records)
