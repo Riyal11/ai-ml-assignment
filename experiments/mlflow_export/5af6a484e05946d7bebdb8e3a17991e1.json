@@ -1,0 +1,28 @@
+{
+  "run_id": "5af6a484e05946d7bebdb8e3a17991e1",
+  "run_name": "test",
+  "status": "FINISHED",
+  "start_time": "2026-08-13T07:13:21.971000+00:00",
+  "end_time": "2026-08-13T07:13:22+00:00",
+  "params": {
+    "run_id": null,
+    "method": null,
+    "r": null,
+    "alpha": null,
+    "target_modules": null,
+    "learning_rate": null,
+    "lr_scheduler_type": null,
+    "max_seq_length": null,
+    "per_device_train_batch_size": null,
+    "gradient_accumulation_steps": null,
+    "num_train_epochs": null,
+    "a": "1"
+  },
+  "metrics": {},
+  "tags": {
+    "mlflow.user": "GI0359",
+    "mlflow.source.name": "-c",
+    "mlflow.source.type": "LOCAL",
+    "mlflow.runName": "test"
+  }
+}

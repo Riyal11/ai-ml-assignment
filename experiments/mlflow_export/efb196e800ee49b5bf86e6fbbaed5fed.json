@@ -1,0 +1,33 @@
+{
+  "run_id": "efb196e800ee49b5bf86e6fbbaed5fed",
+  "run_name": "20260813-125831-qlora",
+  "status": "FAILED",
+  "start_time": "2026-08-13T07:28:39.354000+00:00",
+  "end_time": "2026-08-13T07:28:55.192000+00:00",
+  "params": {
+    "run_id": "20260813-125831-qlora",
+    "method": "qlora",
+    "r": "8",
+    "alpha": "16",
+    "target_modules": "q_proj,k_proj,v_proj,o_proj",
+    "learning_rate": "0.0002",
+    "lr_scheduler_type": "cosine",
+    "max_seq_length": "512",
+    "per_device_train_batch_size": "1",
+    "gradient_accumulation_steps": "8",
+    "num_train_epochs": "3.0",
+    "base_model": "Qwen/Qwen3-4B-Instruct-2507",
+    "seed": "42",
+    "torch_dtype": "bfloat16",
+    "output_dir": "artifacts\\run-001"
+  },
+  "metrics": {},
+  "tags": {
+    "mlflow.user": "GI0359",
+    "mlflow.source.name": "scripts/train.py",
+    "mlflow.source.type": "LOCAL",
+    "mlflow.source.git.commit": "f8c9860774bb5b8c4e2bdf15bed3b008243270d4",
+    "mlflow.source.git.branch": "master",
+    "mlflow.runName": "20260813-125831-qlora"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "run_id": "303c6a71bc4d43e3b120e04be406ae49",
+  "run_name": "20260813-124018-qlora",
+  "status": "FAILED",
+  "start_time": "2026-08-13T07:10:43.264000+00:00",
+  "end_time": "2026-08-13T07:10:43.281000+00:00",
+  "params": {
+    "run_id": null,
+    "method": null,
+    "r": null,
+    "alpha": null,
+    "target_modules": null,
+    "learning_rate": null,
+    "lr_scheduler_type": null,
+    "max_seq_length": null,
+    "per_device_train_batch_size": null,
+    "gradient_accumulation_steps": null,
+    "num_train_epochs": null
+  },
+  "metrics": {},
+  "tags": {
+    "mlflow.user": "GI0359",
+    "mlflow.source.name": "scripts/train.py",
+    "mlflow.source.type": "LOCAL",
+    "mlflow.source.git.commit": "f8c9860774bb5b8c4e2bdf15bed3b008243270d4",
+    "mlflow.source.git.branch": "master",
+    "mlflow.runName": "20260813-124018-qlora"
+  }
+}
