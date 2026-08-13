@@ -14,6 +14,8 @@ but degraded golden-set performance and is documented as a negative result.
 | Hindi eval F1 (synthetic) | **0.960** | — |
 | Human review (20 samples) | **3.25/5.0** (6 perfect) | — |
 
+**Note:** Fine-tuned (run-002) results are shown only for the golden-set F1 and benchmark forgetting evaluations, which were sufficient to reject the model for deployment (F1 0.738 < 0.85 threshold, 10.9% catastrophic forgetting). Schema validity on FT is 100% (see `docs/model_card.md`); Hindi eval and human review were not run on FT after the golden F1 gate failure.
+
 See `SUMMARY.md` for trade-offs, `docs/model_card.md` for go/no-go gates, and
 `docs/human_review.md` for the qualitative audit.
 
