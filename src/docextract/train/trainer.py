@@ -16,7 +16,7 @@ from docextract.data.tokenizer_utils import (
     apply_chat_template,
     load_tokenizer,
 )
-from docextract.train.lora_config import get_adapter_config
+from docextract.train.lora_config import get_adapter_config, get_qlora_config
 from docextract.train.run_config import (
     RunConfig,
     run_config_to_dict,
@@ -42,8 +42,12 @@ _REVISION: str | None = None
 
 def _append_hyperparameter_row(row: dict[str, Any]) -> None:
     """Append one row to the append-only hyperparameter CSV log."""
+    _HYPERPARAM_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    write_header = not _HYPERPARAM_LOG_PATH.exists()
     with _HYPERPARAM_LOG_PATH.open("a", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=_HYPERPARAM_LOG_COLUMNS)
+        if write_header:
+            writer.writeheader()
         writer.writerow(row)
 
 
@@ -128,24 +132,34 @@ def run_training(config: RunConfig, dataset_path: Path) -> Path:
     peak_mem_mb: int | None = None
 
     try:
-        with mlflow.start_run(run_id=config.run_id) as run:
+        logger.info(
+            "Starting training run %s (method=%s, base_model=%s)",
+            config.run_id,
+            config.method,
+            config.base_model,
+        )
+        with mlflow.start_run(run_name=config.run_id) as run:
+            run.log_param("custom_run_id", config.run_id)
             run.log_params({k: v for k, v in run_config_to_dict(config).items() if v is not None})
 
             tokenizer = load_tokenizer(config.base_model)
             adapter_config = get_adapter_config(config)
+            qlora_lora_config = None
 
             model_kwargs: dict[str, Any] = {"torch_dtype": "auto", "device_map": "auto"}
             if config.method == "qlora":
-                _, bnb_config = adapter_config  # type: ignore[misc]
+                qlora_lora_config, bnb_config = get_qlora_config(config)
                 model_kwargs["quantization_config"] = bnb_config
 
             model: Any = AutoModelForCausalLM.from_pretrained(
                 config.base_model, revision=_REVISION, **model_kwargs
             )
             if config.method == "qlora":
+                if qlora_lora_config is None:
+                    raise RuntimeError("QLoRA config missing after get_qlora_config")
                 model = prepare_model_for_kbit_training(model)  # type: ignore[no-untyped-call]
+                model = get_peft_model(model, qlora_lora_config)
             elif config.method in ("lora", "dora"):
-                trainable_params, total_params = _count_params(model)
                 model = get_peft_model(model, adapter_config)  # type: ignore[arg-type]
 
             trainable_params, total_params = _count_params(model)
@@ -193,7 +207,12 @@ def run_training(config: RunConfig, dataset_path: Path) -> Path:
                 }
             )
             status = "succeeded"
-            logger.info("Run %s finished in %.1fs", config.run_id, train_time_sec)
+            logger.info(
+                "Training run %s finished successfully in %.1fs (adapter at %s)",
+                config.run_id,
+                train_time_sec,
+                config.output_dir,
+            )
     except Exception:
         logger.exception("Training run %s failed", config.run_id)
         raise
