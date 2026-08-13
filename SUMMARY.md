@@ -8,7 +8,12 @@ docextract assignment.
 | Decision | Chose | Rejected / deferred | Why |
 |----------|-------|---------------------|-----|
 | Base model | **Qwen3-4B-Instruct** | Larger 7B+ / Llama-3.2-3B | Single-GPU budget; Apache 2.0; native JSON mode; stronger Hindi tokenizer coverage than Llama for this brief |
-| Quantization | **GGUF Q4_K_M** | AWQ as primary | Simpler local path via llama.cpp; AWQ better for vLLM throughput but heavier toolchain for Day 3 |
+| Quantization | **GGUF Q4_K_M** (planned) | AWQ as primary | Simpler local path via llama.cpp; AWQ better for vLLM throughput but heavier toolchain for Day 3 |
+
+Note: GGUF quantization was attempted but could not be completed because
+`scripts/quantize.py` does not resolve Hugging Face Hub model IDs on Windows and
+the `convert_hf_to_gguf.py` / `llama-quantize` toolchain was not available in
+this environment. Only unquantized base benchmark results are included.
 | Serving stack | **llama-cpp-python** (+ Transformers for `none`) | vLLM / SGLang | Faster to stand up for a take-home; lower peak throughput and less production polish |
 | Async jobs | **Celery + Redis**, with **sync fallback** | Celery-only | Works without infra for demos; async when `CELERY_BROKER_URL` is set |
 | **Production model** | **Base Qwen3-4B-Instruct-2507** | Fine-tuned QLoRA adapters | Golden F1 0.86 (base) vs 0.74 (run-002); fine-tuning hurt generalization |

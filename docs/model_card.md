@@ -172,6 +172,14 @@ validation before downstream ingestion.
 - Alert when validity drops below 90% or Hindi F1 gap exceeds 0.05
 - Log disagreements between automated and human review for periodic re-audit
 
+### Quantization
+
+Note: GGUF quantization was attempted but could not be completed because
+`scripts/quantize.py` does not resolve Hugging Face Hub model IDs on Windows and
+the `convert_hf_to_gguf.py` / `llama-quantize` toolchain was not available in
+this environment. Only unquantized base benchmark results are included
+(`experiments/bench_results_base.json`).
+
 ## Go / No-Go Recommendation
 
 **Status: CONDITIONAL GO — Use Base Model**
