@@ -22,9 +22,9 @@ model's JSON output side by side.
 
 ## Sample Set
 
-- **Target:** ~20 outputs, balanced English/Hindi where the golden set allows
+- **Target:** 20 outputs from the English golden set
 - **Source:** `data/golden/` only — never used for training or hyperparameter tuning
-- **Selection:** Random stratified sample by language (aim for ~10 EN + ~10 HI)
+- **Selection:** First 20 golden examples (all English; Hindi synthetic eval handled separately in `experiments/eval-base-hindi/`)
 - **Inputs:** Raw document text + model prediction JSON from the evaluation pipeline
 - **Reviewers:** At least one reviewer per sample; a second reviewer for any sample
   flagged with `disagreement_flag = yes`
