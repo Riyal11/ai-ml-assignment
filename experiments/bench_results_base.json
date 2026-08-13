@@ -1,0 +1,25 @@
+{
+  "model_path": "Qwen/Qwen3-4B-Instruct-2507",
+  "quantization": "none",
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "vram_mb": 8187
+  },
+  "metrics": {
+    "ttft_ms": {
+      "mean": 7358.501301000046,
+      "p50": 6711.679510000067,
+      "p95": 10449.058279999917
+    },
+    "throughput_tokens_per_sec": 3.478969283666636,
+    "memory_peak_mb": 6663.0,
+    "total_latency_ms": {
+      "mean": 73585.01301000005,
+      "p50": 67116.79509999999,
+      "p95": 104490.58280000009
+    }
+  },
+  "prompts_tested": 10,
+  "methodology": "warmup=2, batch=1, sequential",
+  "timestamp": "2026-08-13T14:59:20.975643+00:00"
+}

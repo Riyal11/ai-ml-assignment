@@ -1,0 +1,56 @@
+{
+  "run_id": "eval-20260813-143350",
+  "split": "benchmark",
+  "model_path": "Qwen\\Qwen3-4B-Instruct-2507",
+  "schema_validity_rate": 1.0,
+  "exact_match": 0.9000000000000001,
+  "precision_recall_f1": {
+    "precision": 0.8296153846153846,
+    "recall": 0.8699999999999999,
+    "f1": 0.8471739130434782
+  },
+  "field_precision_recall_f1": {
+    "invoice_number": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "vendor_name": {
+      "precision": 0.3,
+      "recall": 0.3,
+      "f1": 0.3
+    },
+    "invoice_date": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "subtotal": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "tax_amount": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "total_amount": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "currency": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "line_items": {
+      "precision": 0.725,
+      "recall": 0.8,
+      "f1": 0.75
+    }
+  },
+  "num_examples": 20,
+  "timestamp": "2026-08-13T14:33:50.599725+00:00"
+}

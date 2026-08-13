@@ -1,0 +1,58 @@
+{
+  "run_id": "eval-20260813-144026",
+  "split": "benchmark",
+  "model_path": "artifacts\\run-002",
+  "schema_validity_rate": 1.0,
+  "exact_match": 0.7714285714285712,
+  "precision_recall_f1": {
+    "precision": 0.755,
+    "recall": 0.755,
+    "f1": 0.755
+  },
+  "field_precision_recall_f1": {
+    "invoice_number": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "vendor_name": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "invoice_date": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "subtotal": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "tax_amount": {
+      "precision": 0.45,
+      "recall": 0.45,
+      "f1": 0.45
+    },
+    "total_amount": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "currency": {
+      "precision": 0.95,
+      "recall": 0.95,
+      "f1": 0.95
+    },
+    "line_items": {
+      "precision": 0.7166666666666665,
+      "recall": 0.7166666666666665,
+      "f1": 0.7166666666666665
+    }
+  },
+  "num_examples": 20,
+  "timestamp": "2026-08-13T14:40:26.463248+00:00",
+  "relative_benchmark_drop": 0.10880164228894018,
+  "forgetting_retention_ratio": 0.8911983577110598
+}
