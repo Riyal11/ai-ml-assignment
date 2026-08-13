@@ -51,3 +51,11 @@ Examined failed PDFs manually — they are empty placeholder/stub files. Filenam
 - Lost 15 potential training examples
 - Gained higher data quality by excluding garbage
 - 830 train examples still exceeds assignment minimum (~300–500)
+
+### Run ID: pre-training
+- **Category**: bugfix
+- **Observed**: Code review of `trainer.py` found the QLoRA branch calls `prepare_model_for_kbit_training(model)` but never `get_peft_model()`. LoRA/DoRA paths wrap adapters; QLoRA does not. Would train full quantized weights (OOM risk, no adapter checkpoint). Secondary issues: `mlflow.start_run(run_id=config.run_id)` passes a custom string where MLflow expects a UUID; `experiments/hyperparameter_log.csv` append may fail if parent directory or header row is missing.
+- **Diagnosis**: Compared `if config.method == "qlora"` vs `elif config.method in ("lora", "dora")` branches in `src/docextract/train/trainer.py` (~L145–149). LoRA/DoRA call `get_peft_model`; QLoRA stops after k-bit prep. MLflow `run_id` misuse confirmed against MLflow API docs. CSV writer uses mode `a` without `mkdir` or header-on-first-write.
+- **Change**: `trainer.py` — after `prepare_model_for_kbit_training`, wrap with `get_peft_model(model, lora_config)` using `get_qlora_config(config)[0]`; switch to `mlflow.start_run(run_name=...)` and log `custom_run_id`; ensure `experiments/` exists and write CSV header when file is new; add training start/finish log lines.
+- **Follow-up Run ID**: N/A for pre-training (first QLoRA run will validate)
+- **Status**: resolved
