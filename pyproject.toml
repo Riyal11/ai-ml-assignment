@@ -19,6 +19,8 @@ dependencies = [
     "uvicorn[standard]>=0.30.0",
     "celery>=5.4.0",
     "redis>=5.0.0",
+    "pdfplumber>=0.11",
+    "python-dateutil>=2.9",
 ]
 
 [project.optional-dependencies]
@@ -31,6 +33,7 @@ dev = [
     "bandit",
     "pre-commit",
     "types-jsonschema",
+    "types-python-dateutil",
     "fastapi>=0.115.0",
     "uvicorn[standard]>=0.30.0",
     "celery>=5.4.0",
