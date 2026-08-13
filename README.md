@@ -1,6 +1,21 @@
 # docextract
 
-Fine-tuned open-weight model that extracts structured invoice metadata from English and Hindi documents into strict JSON matching a fixed schema.
+Open-weight invoice extraction pipeline for English and Hindi documents into strict
+JSON matching a fixed schema. **Production deployment uses the base**
+`Qwen/Qwen3-4B-Instruct-2507` model; QLoRA fine-tuning was attempted (run-001, run-002)
+but degraded golden-set performance and is documented as a negative result.
+
+## Results (submission snapshot)
+
+| Metric | Base model | Fine-tuned (run-002) |
+|--------|------------|----------------------|
+| Golden F1 | **0.857** | 0.738 |
+| Schema validity | **100%** | — |
+| Hindi eval F1 (synthetic) | **0.960** | — |
+| Human review (20 samples) | **3.25/5.0** (6 perfect) | — |
+
+See `SUMMARY.md` for trade-offs, `docs/model_card.md` for go/no-go gates, and
+`docs/human_review.md` for the qualitative audit.
 
 ## Quick start
 
@@ -35,11 +50,17 @@ Base model default: `Qwen/Qwen3-4B-Instruct-2507` (see `docs/model_selection_mem
 ## Evaluation
 
 ```bash
-# Stub CLI — evaluation pipeline exists in-package; dedicated script pending
-uv run python scripts/evaluate.py --split golden
+uv run python scripts/evaluate.py \
+  --model-path Qwen/Qwen3-4B-Instruct-2507 \
+  --dataset data/golden/eval.jsonl \
+  --output-dir experiments/eval-base \
+  --split golden
 ```
 
-Programmatic entrypoint today:
+Use `--stub` to force empty predictions (pipeline tests only). For adapters, pass
+`--model-path artifacts/run-002/checkpoint-520` (or any PEFT checkpoint dir).
+
+Programmatic entrypoint:
 
 ```python
 from pathlib import Path
@@ -47,20 +68,22 @@ from docextract.data.dataset import Split
 from docextract.eval.pipeline import run_evaluation
 
 run_evaluation(
-    model_path=Path("artifacts/merged-model"),
+    model_path=Path("Qwen/Qwen3-4B-Instruct-2507"),
     dataset_path=Path("data/golden/eval.jsonl"),
-    output_dir=Path("experiments/eval"),
+    output_dir=Path("experiments/eval-base"),
     split=Split.GOLDEN,
 )
 ```
 
-**Note:** `run_evaluation` currently uses stub predictions (`{}`) until real inference is wired. Results land in `results.json`.
+`run_evaluation` loads real Hugging Face / PEFT weights when the model path is a Hub ID
+or local checkpoint; stub mode applies only to non-loadable paths or when `--stub` is set.
+Results are written to `results.json` under `--output-dir`.
 
 ## Quality gate
 
 ```bash
 uv run python scripts/quality_gate.py \
-  --results experiments/eval/results.json \
+  --results experiments/eval-base/results.json \
   --criteria docs/acceptance_criteria.md
 ```
 
@@ -69,6 +92,9 @@ Exits `0` if all quantitative thresholds pass, `1` otherwise. CI also runs the g
 ## Serving
 
 ```bash
+# Recommended: point at the production base model (downloads from Hugging Face on first run)
+# Windows: set DOCEXTRACT_MODEL_PATH=Qwen/Qwen3-4B-Instruct-2507
+export DOCEXTRACT_MODEL_PATH=Qwen/Qwen3-4B-Instruct-2507
 uv run uvicorn docextract.api.main:app --reload --port 8000
 
 # Optional Celery worker (requires Redis + CELERY_BROKER_URL)
@@ -78,14 +104,16 @@ docker run -d -p 6379:6379 redis:alpine
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `DOCEXTRACT_MODEL_PATH` | `artifacts/merged-model` | HF model dir or GGUF file |
+| `DOCEXTRACT_MODEL_PATH` | `artifacts/merged-model` | HF Hub ID, local model dir, PEFT adapter, or GGUF file |
 | `DOCEXTRACT_MODEL_ID` | `docextract-qwen3-4b` | Id returned by `/v1/models` |
 | `DOCEXTRACT_QUANTIZATION` | `none` | Serving backend (`none`, `gguf`) |
 | `CELERY_BROKER_URL` | unset | When set, quantization jobs run via Celery; otherwise sync fallback |
 
 Endpoints: `GET /health`, `GET /v1/models`, `POST /v1/chat/completions` (JSON or SSE), `POST /extract`, `POST /v1/jobs/quantize`, `GET /v1/jobs/{job_id}`.
 
-**Note:** `InferenceService` returns stub completions until model weights are loaded for real.
+**Note:** `InferenceService` loads real weights for Hub IDs and valid local checkpoints.
+Empty or missing local paths use a stub predictor (for API tests). GGUF quantization was
+attempted but not completed on Windows — see `SUMMARY.md` and `docs/model_card.md`.
 
 ## Tests
 
@@ -98,15 +126,23 @@ uv run pytest -q
 
 ```
 src/docextract/     # package: data, train, eval, api, jobs, gates, mcp, retrieval, …
-scripts/            # train, quality_gate, quantize, benchmark CLIs
+scripts/            # train, evaluate, quality_gate, quantize, benchmark CLIs
 configs/            # schema, train YAMLs, bench prompts
 docs/               # brief, acceptance criteria, model card, design notes
 tests/              # pytest suite + fixtures
 data/               # train / validation / golden / benchmark splits
-artifacts/          # adapters, merged models, GGUF outputs
+artifacts/          # QLoRA adapters and checkpoint metadata (no merged weights in git)
 experiments/        # hyperparameter log, eval/bench results
 .github/workflows/  # CI: lint, pytest, quality gate
 ```
+
+## Related documentation
+
+- `SUMMARY.md` — engineering trade-offs and known limitations
+- `docs/model_card.md` — model details, eval metrics, deployment decision
+- `docs/human_review.md` — 20-sample qualitative audit
+- `docs/training_diary.md` — fine-tuning incidents and catastrophic forgetting
+- `docs/acceptance_criteria.md` — quantitative quality gates
 
 ## License
 
