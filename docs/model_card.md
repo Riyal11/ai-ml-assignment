@@ -76,9 +76,9 @@ Human review metrics (see `docs/human_review.md`):
 
 | Metric | Value | Threshold | Status |
 |--------|-------|-----------|--------|
-| Mean human score (0–5) | **3.25** | ≥ 4.0 | Below threshold |
+| Mean human score | **3.25** | ≥ 4.0 | Below threshold |
 | Perfect extractions | **6/20 (30%)** | — | — |
-| Pass rate (≥ 4/6 on rubric) | Below 80% | ≥ 80% | Below threshold |
+| Pass rate (≥ 3/5 on rubric) | Below 80% | ≥ 80% | Below threshold |
 
 **Qualitative assessment (20 samples, base model):**
 

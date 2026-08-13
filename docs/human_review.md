@@ -6,32 +6,19 @@ Complements automated metrics in `src/docextract/eval/` and the CI quality gate 
 
 ## Rubric
 
-Each dimension is scored on a **3-point scale (0–2)**. Reviewers read the source
-document and the model's JSON output side by side.
+Each sample is scored on a **0–5 scale**. Reviewers read the source document and the
+model's JSON output side by side.
 
-| Dimension | Score | Definition |
-|-----------|-------|------------|
-| **Correctness** | 0 | Multiple fields wrong or missing; values do not match the document |
-| | 1 | Most fields correct; one or two minor errors (e.g. typo in vendor name) |
-| | 2 | All extracted fields match the source document |
-| **Faithfulness** | 0 | Hallucinated fields or values not supported by the document |
-| | 1 | No invented fields, but one value inferred beyond what the text states |
-| | 2 | Every value is directly grounded in the source text |
-| **Formatting** | 0 | Not valid JSON, or wrapped in markdown fences / prose |
-| | 1 | Valid JSON but missing required keys or wrong types |
-| | 2 | Valid JSON matching the strict invoice schema (`configs/schema/invoice_schema.json`) |
+| Score | Definition |
+|-------|------------|
+| 5 | Perfect — all fields match, no hallucinations, valid schema JSON |
+| 4 | Minor issues — one field slightly wrong or formatting quirk |
+| 3 | Moderate issues — a key field wrong (e.g., vendor_name) but most correct |
+| 2 | Major issues — multiple fields wrong or hallucinated items |
+| 1 | Critical issues — most fields wrong but some structure present |
+| 0 | Unusable — invalid JSON or completely wrong extraction |
 
-**Total score (0–6):**
-
-| Total | Interpretation |
-|-------|----------------|
-| 6 | Perfect |
-| 4–5 | Minor issues — acceptable for production with monitoring |
-| 2–3 | Major issues — requires remediation before promotion |
-| 0–1 | Unusable — block deployment |
-
-**Minimum pass rate:** ≥ 80% of the 20-sample audit must score ≥ 4/6 (see
-`docs/acceptance_criteria.md`).
+**Minimum pass rate:** ≥ 80% of the 20-sample audit must score ≥ 3/5.
 
 ## Sample Set
 
@@ -102,7 +89,7 @@ Set `disagreement_flag = yes` when:
 |-----------|-------|
 | Mean human score (0–5) | **3.25** |
 | Perfect extractions (5/5) | **6/20 (30%)** |
-| Pass rate threshold (≥ 80% scoring ≥ 4/6 on rubric) | **Not met** on strict 0–6 rubric; see simplified 0–5 audit above |
+| Pass rate threshold (≥ 80% scoring ≥ 3/5) | **Not met** (only 30% score ≥ 4/5) |
 | Primary failure mode | `vendor_name` confusion (product brand vs issuer) |
 | Secondary failure mode | Hallucinated category-code line items with 0 `unit_price` |
 

@@ -35,6 +35,23 @@ uv run bandit -c pyproject.toml -r src
 uv run pytest -q
 ```
 
+## Data
+
+Training and evaluation data are not committed to git (`data/` is in `.gitignore`).
+To regenerate the synthetic SuperStore dataset from source PDFs:
+
+```bash
+uv run python scripts/extract_superstore_invoices.py \
+  --pdf-dir data/raw/superstore \
+  --output-dir data
+```
+
+Splits are written under `data/train/`, `data/validation/`, `data/golden/`, and
+`data/benchmark/`.
+
+Or use your own invoice JSONL files with the schema defined in
+`configs/schema/invoice_schema.json`.
+
 ## Training
 
 ```bash
