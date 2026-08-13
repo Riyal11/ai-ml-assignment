@@ -156,7 +156,9 @@ experiments/        # hyperparameter log, eval/bench results
 ## Related documentation
 
 - `SUMMARY.md` — engineering trade-offs and known limitations
+- `CHANGELOG.md` — submission changelog
 - `docs/model_card.md` — model details, eval metrics, deployment decision
+- `docs/data_contract.md` — JSON schema and dataset split contract
 - `docs/human_review.md` — 20-sample qualitative audit
 - `docs/training_diary.md` — fine-tuning incidents and catastrophic forgetting
 - `docs/acceptance_criteria.md` — quantitative quality gates
