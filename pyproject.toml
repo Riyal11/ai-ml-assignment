@@ -76,14 +76,5 @@ follow_imports = "skip"
 addopts = "-v --cov=docextract --cov-report=term-missing"
 testpaths = ["tests"]
 
-[tool.coverage.run]
-omit = [
-    "*/__init__.py",
-    "*/tests/*",
-    "*/scripts/*",
-    "*/mcp/*",
-    "*/retrieval/*",
-]
-
 [tool.bandit]
 targets = ["src"]
