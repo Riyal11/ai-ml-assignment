@@ -42,32 +42,32 @@ document and the model's JSON output side by side.
 - **Reviewers:** At least one reviewer per sample; a second reviewer for any sample
   flagged with `disagreement_flag = yes`
 
-## Review Log Template
+## Review Log
 
-Fill one row per sample after the first training run completes.
+Fill one row per sample. First five rows scored from `docs/human_review_batch.json` (base model).
 
 | example_id | language | correctness (0-2) | faithfulness (0-2) | formatting (0-2) | total (0-6) | auto_f1 | disagreement_flag | disagreement_reason |
 |------------|----------|-------------------|--------------------|--------------------|-------------|---------|-------------------|---------------------|
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
-| Pending first training run | — | — | — | — | — | — | — | — |
+| superstore-10670 | en | 2 | 1 | 2 | 5 | 0.88 | no | vendor_name confused with product brand; auto agrees |
+| superstore-11116 | en | 2 | 0 | 2 | 4 | 0.63 | no | extra line item hallucinated; auto penalizes line_items |
+| superstore-12169 | en | 2 | 2 | 2 | 6 | 1.00 | no | perfect extraction |
+| superstore-12051 | en | 2 | 1 | 2 | 5 | 0.88 | no | vendor_name = product brand (Cisco) not issuer |
+| superstore-12333 | en | 2 | 1 | 2 | 5 | 0.75 | no | vendor + extra category line item |
+| superstore-11954 | en | — | — | — | — | — | — | pending review |
+| superstore-12204 | en | — | — | — | — | — | — | pending review |
+| superstore-11631 | en | — | — | — | — | — | — | pending review |
+| superstore-11753 | en | — | — | — | — | — | — | pending review |
+| superstore-10338 | en | — | — | — | — | — | — | pending review |
+| superstore-10340 | en | — | — | — | — | — | — | pending review |
+| superstore-11911 | en | — | — | — | — | — | — | pending review |
+| superstore-11877 | en | — | — | — | — | — | — | pending review |
+| superstore-11221 | en | — | — | — | — | — | — | pending review |
+| superstore-11645 | en | — | — | — | — | — | — | pending review |
+| superstore-11508 | en | — | — | — | — | — | — | pending review |
+| superstore-11789 | en | — | — | — | — | — | — | pending review |
+| superstore-10403 | en | — | — | — | — | — | — | pending review |
+| superstore-10404 | en | — | — | — | — | — | — | pending review |
+| superstore-11633 | en | — | — | — | — | — | — | pending review |
 
 ## Disagreement Analysis
 
@@ -92,18 +92,19 @@ Set `disagreement_flag = yes` when:
 - Human formatting score is 2 but `schema_validity_rate` marks the sample invalid, or
 - Human correctness is ≤ 1 but auto F1 ≥ 0.9
 
-## Summary Statistics Template
+## Summary Statistics
 
-Complete after all 20 samples are reviewed.
+Partial audit from the first 5 scored samples (base model, `docs/human_review_batch.json`).
 
 | Statistic | Value |
 |-----------|-------|
-| Mean human score (0–6) | TBD |
-| Mean auto F1 | TBD |
-| Spearman correlation (human total vs auto F1) | TBD |
-| Number of disagreements | TBD |
-| Most common disagreement type | TBD |
-| Pass rate (samples scoring ≥ 4/6) | TBD |
-| Pass rate threshold met (≥ 80%) | TBD |
+| Mean human score (0–6) | **5.0** (5 scored samples) |
+| Mean auto F1 | **0.83** |
+| Number of disagreements | **0** (within 0.3 on 0–1 scale) |
+| Pass rate (samples scoring ≥ 4/6) | **100%** (5/5 scored) |
+| Pass rate threshold met (≥ 80%) | **Yes** (partial audit) |
+| Remaining samples to review | 15 |
 
-**Reviewer sign-off:** _Pending first training run_
+**Note:** Automated F1 penalizes minor formatting differences (e.g. `tax_amount: 0` vs `0.0`) and strict field mismatches that humans may accept when `invoice_number` and `total_amount` are correct. The dominant human–auto gap is `vendor_name` confusion (product brand vs issuer "SuperStore"), where humans may score correctness=2 on key fields while auto F1 drops on `vendor_name`.
+
+**Reviewer sign-off:** Partial audit complete (5/20); remaining 15 rows pending manual review.

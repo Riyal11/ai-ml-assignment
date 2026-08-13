@@ -1,0 +1,807 @@
+[
+  {
+    "example_id": "superstore-10670",
+    "document_preview": "SuperStore INVOICE # 10670 Date: Aug 15 2012 Bill To: Ship To: Ship Mode: Standard Class Alice McCarthy Harrogate, England, United Kingdom Balance Due: $31,604.76 Item Quantity Rate Amount Nokia Smart Phone, Cordless 7 $4,453.05 $31,171....",
+    "gold_json": {
+      "invoice_number": "10670",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-08-15",
+      "line_items": [
+        {
+          "description": "Nokia Smart Phone, Cordless",
+          "quantity": 7,
+          "unit_price": 4453.05
+        }
+      ],
+      "subtotal": 31171.35,
+      "tax_amount": 0.0,
+      "total_amount": 31604.76,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "10670",
+      "vendor_name": "Nokia",
+      "invoice_date": "2012-08-15",
+      "line_items": [
+        {
+          "description": "Nokia Smart Phone, Cordless",
+          "quantity": 7,
+          "unit_price": 4453.05
+        }
+      ],
+      "subtotal": 31171.35,
+      "tax_amount": 0,
+      "total_amount": 31604.76,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"10670\",\n  \"vendor_name\": \"Nokia\",\n  \"invoice_date\": \"2012-08-15\",\n  \"line_items\": [\n    {\n      \"description\": \"Nokia Smart Phone, Cordless\",\n      \"quantity\": 7,\n      \"unit_price\": 4453.05\n    }\n  ],\n  \"subtotal\": 31171.35,\n  \"tax_amount\": 0,\n  \"total_amount\": 31604.76,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-11116",
+    "document_preview": "SuperStore INVOICE # 11116 Date: May 12 2012 Bill To: Ship To: Ship Mode: Second Class Anthony Rawles Messina, Sicily, Italy Balance Due: $4,198.62 Item Quantity Rate Amount SanDisk Router, Bluetooth 4 $1,025.40 $4,101.60 Accessories, Te...",
+    "gold_json": {
+      "invoice_number": "11116",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-05-12",
+      "line_items": [
+        {
+          "description": "SanDisk Router, Bluetooth",
+          "quantity": 4,
+          "unit_price": 1025.4
+        }
+      ],
+      "subtotal": 4101.6,
+      "tax_amount": 0.0,
+      "total_amount": 4198.62,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "11116",
+      "vendor_name": "SanDisk",
+      "invoice_date": "2012-05-12",
+      "line_items": [
+        {
+          "description": "Router, Bluetooth 4",
+          "quantity": 1,
+          "unit_price": 4101.6
+        },
+        {
+          "description": "Accessories, Technology, TEC-AC-5894",
+          "quantity": 1,
+          "unit_price": 0
+        }
+      ],
+      "subtotal": 4101.6,
+      "tax_amount": 0,
+      "total_amount": 4198.62,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"11116\",\n  \"vendor_name\": \"SanDisk\",\n  \"invoice_date\": \"2012-05-12\",\n  \"line_items\": [\n    {\n      \"description\": \"Router, Bluetooth 4\",\n      \"quantity\": 1,\n      \"unit_price\": 4101.60\n    },\n    {\n      \"description\": \"Accessories, Technology, TEC-AC-5894\",\n      \"quantity\": 1,\n      \"unit_price\": 0\n    }\n  ],\n  \"subtotal\": 4101.6,\n  \"tax_amount\": 0,\n  \"total_amount\": 4198.62,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-12169",
+    "document_preview": "SuperStore INVOICE # 12169 Date: Aug 04 2012 Bill To: Ship To: Ship Mode: First Class Barry Weirich Cologne, North Rhine-Westphalia, Balance Due: $4,861.46 Germany Item Quantity Rate Amount Apple Headset, with Caller ID 8 $586.08 $4,688....",
+    "gold_json": {
+      "invoice_number": "12169",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-08-04",
+      "line_items": [
+        {
+          "description": "Apple Headset, with Caller ID",
+          "quantity": 8,
+          "unit_price": 586.08
+        }
+      ],
+      "subtotal": 4688.64,
+      "tax_amount": 0.0,
+      "total_amount": 4861.46,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "12169",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-08-04",
+      "line_items": [
+        {
+          "description": "Apple Headset, with Caller ID",
+          "quantity": 8,
+          "unit_price": 586.08
+        }
+      ],
+      "subtotal": 4688.64,
+      "tax_amount": 0,
+      "total_amount": 4861.46,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"12169\",\n  \"vendor_name\": \"SuperStore\",\n  \"invoice_date\": \"2012-08-04\",\n  \"line_items\": [\n    {\n      \"description\": \"Apple Headset, with Caller ID\",\n      \"quantity\": 8,\n      \"unit_price\": 586.08\n    }\n  ],\n  \"subtotal\": 4688.64,\n  \"tax_amount\": 0,\n  \"total_amount\": 4861.46,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-12051",
+    "document_preview": "SuperStore INVOICE # 12051 Date: Aug 09 2012 Bill To: Ship To: Ship Mode: Standard Class Becky Pak London, England, United Kingdom Balance Due: $43,198.41 Item Quantity Rate Amount Cisco Smart Phone, Cordless 9 $5,276.99 $47,492.89 Phone...",
+    "gold_json": {
+      "invoice_number": "12051",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-08-09",
+      "line_items": [
+        {
+          "description": "Cisco Smart Phone, Cordless",
+          "quantity": 9,
+          "unit_price": 5276.99
+        }
+      ],
+      "subtotal": 47492.89,
+      "tax_amount": 0.0,
+      "total_amount": 43198.41,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "12051",
+      "vendor_name": "Cisco",
+      "invoice_date": "2012-08-09",
+      "line_items": [
+        {
+          "description": "Cisco Smart Phone, Cordless",
+          "quantity": 9,
+          "unit_price": 5276.99
+        }
+      ],
+      "subtotal": 47492.89,
+      "tax_amount": 0,
+      "total_amount": 43198.41,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"12051\",\n  \"vendor_name\": \"Cisco\",\n  \"invoice_date\": \"2012-08-09\",\n  \"line_items\": [\n    {\n      \"description\": \"Cisco Smart Phone, Cordless\",\n      \"quantity\": 9,\n      \"unit_price\": 5276.99\n    }\n  ],\n  \"subtotal\": 47492.89,\n  \"tax_amount\": 0,\n  \"total_amount\": 43198.41,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-12333",
+    "document_preview": "SuperStore INVOICE # 12333 Date: Jun 25 2012 Bill To: Ship To: Ship Mode: First Class Ben Wallace Dieppe, Normandy, France Balance Due: $1,486.10 Item Quantity Rate Amount Safco Library with Doors, Pine 2 $704.05 $1,408.10 Bookcases, Fur...",
+    "gold_json": {
+      "invoice_number": "12333",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-06-25",
+      "line_items": [
+        {
+          "description": "Safco Library with Doors, Pine",
+          "quantity": 2,
+          "unit_price": 704.05
+        }
+      ],
+      "subtotal": 1408.1,
+      "tax_amount": 0.0,
+      "total_amount": 1486.1,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "12333",
+      "vendor_name": "Safco",
+      "invoice_date": "2012-06-25",
+      "line_items": [
+        {
+          "description": "Safco Library with Doors, Pine",
+          "quantity": 2,
+          "unit_price": 704.05
+        },
+        {
+          "description": "Bookcases, Furniture, FUR-BO-5787",
+          "quantity": 1,
+          "unit_price": 0
+        }
+      ],
+      "subtotal": 1408.1,
+      "tax_amount": 0,
+      "total_amount": 1486.1,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"12333\",\n  \"vendor_name\": \"Safco\",\n  \"invoice_date\": \"2012-06-25\",\n  \"line_items\": [\n    {\n      \"description\": \"Safco Library with Doors, Pine\",\n      \"quantity\": 2,\n      \"unit_price\": 704.05\n    },\n    {\n      \"description\": \"Bookcases, Furniture, FUR-BO-5787\",\n      \"quantity\": 1,\n      \"unit_price\": 0\n    }\n  ],\n  \"subtotal\": 1408.1,\n  \"tax_amount\": 0,\n  \"total_amount\": 1486.1,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-11954",
+    "document_preview": "SuperStore INVOICE # 11954 Date: Mar 31 2012 Bill To: Ship To: Ship Mode: First Class Benjamin Patterson Treviso, Veneto, Italy Balance Due: $1,846.74 Item Quantity Rate Amount Wilson Jones Binding Machine, Recycled 6 $295.92 $1,775.52 B...",
+    "gold_json": {
+      "invoice_number": "11954",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-03-31",
+      "line_items": [
+        {
+          "description": "Wilson Jones Binding Machine, Recycled",
+          "quantity": 6,
+          "unit_price": 295.92
+        }
+      ],
+      "subtotal": 1775.52,
+      "tax_amount": 0.0,
+      "total_amount": 1846.74,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "11954",
+      "vendor_name": "Wilson Jones",
+      "invoice_date": "2012-03-31",
+      "line_items": [
+        {
+          "description": "Binding Machine, Recycled",
+          "quantity": 6,
+          "unit_price": 295.92
+        }
+      ],
+      "subtotal": 1775.52,
+      "tax_amount": 0,
+      "total_amount": 1846.74,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"11954\",\n  \"vendor_name\": \"Wilson Jones\",\n  \"invoice_date\": \"2012-03-31\",\n  \"line_items\": [\n    {\n      \"description\": \"Binding Machine, Recycled\",\n      \"quantity\": 6,\n      \"unit_price\": 295.92\n    }\n  ],\n  \"subtotal\": 1775.52,\n  \"tax_amount\": 0,\n  \"total_amount\": 1846.74,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-12204",
+    "document_preview": "SuperStore INVOICE # 12204 Date: Apr 10 2012 Bill To: Ship To: Ship Mode: Second Class Berenike Kampe Bonn, North Rhine- Westphalia, Germany Balance Due: $2,506.76 Item Quantity Rate Amount Canon Copy Machine, Digital 3 $785.34 $2,356.02...",
+    "gold_json": {
+      "invoice_number": "12204",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-04-10",
+      "line_items": [
+        {
+          "description": "Canon Copy Machine, Digital",
+          "quantity": 3,
+          "unit_price": 785.34
+        }
+      ],
+      "subtotal": 2356.02,
+      "tax_amount": 0.0,
+      "total_amount": 2506.76,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "12204",
+      "vendor_name": "Canon",
+      "invoice_date": "2012-04-10",
+      "line_items": [
+        {
+          "description": "Canon Copy Machine, Digital",
+          "quantity": 3,
+          "unit_price": 785.34
+        }
+      ],
+      "subtotal": 2356.02,
+      "tax_amount": 0,
+      "total_amount": 2506.76,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"12204\",\n  \"vendor_name\": \"Canon\",\n  \"invoice_date\": \"2012-04-10\",\n  \"line_items\": [\n    {\n      \"description\": \"Canon Copy Machine, Digital\",\n      \"quantity\": 3,\n      \"unit_price\": 785.34\n    }\n  ],\n  \"subtotal\": 2356.02,\n  \"tax_amount\": 0,\n  \"total_amount\": 2506.76,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-11631",
+    "document_preview": "SuperStore INVOICE # 11631 Date: May 01 2012 Bill To: Ship To: Ship Mode: Standard Class Bill Donatelli Pontoise, Ile-de- France, France Balance Due: $6,352.52 Item Quantity Rate Amount Hoover Microwave, Red 5 $1,388.88 $6,944.40 Applian...",
+    "gold_json": {
+      "invoice_number": "11631",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-05-01",
+      "line_items": [
+        {
+          "description": "Hoover Microwave, Red",
+          "quantity": 5,
+          "unit_price": 1388.88
+        }
+      ],
+      "subtotal": 6944.4,
+      "tax_amount": 0.0,
+      "total_amount": 6352.52,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "11631",
+      "vendor_name": "Appliances, Office Supplies, OFF-AP-4731",
+      "invoice_date": "2012-05-01",
+      "line_items": [
+        {
+          "description": "Hoover Microwave, Red",
+          "quantity": 5,
+          "unit_price": 1388.88
+        }
+      ],
+      "subtotal": 6944.4,
+      "tax_amount": 0,
+      "total_amount": 6352.52,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"11631\",\n  \"vendor_name\": \"Appliances, Office Supplies, OFF-AP-4731\",\n  \"invoice_date\": \"2012-05-01\",\n  \"line_items\": [\n    {\n      \"description\": \"Hoover Microwave, Red\",\n      \"quantity\": 5,\n      \"unit_price\": 1388.88\n    }\n  ],\n  \"subtotal\": 6944.40,\n  \"tax_amount\": 0,\n  \"total_amount\": 6352.52,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-11753",
+    "document_preview": "SuperStore INVOICE # 11753 Date: Jan 04 2013 Bill To: Ship To: Ship Mode: Same Day Chad Cunningham Rouen, Normandy, France Balance Due: $3,504.34 Item Quantity Rate Amount SanDisk Numeric Keypad, USB 8 $425.28 $3,402.24 Accessories, Tech...",
+    "gold_json": {
+      "invoice_number": "11753",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2013-01-04",
+      "line_items": [
+        {
+          "description": "SanDisk Numeric Keypad, USB",
+          "quantity": 8,
+          "unit_price": 425.28
+        }
+      ],
+      "subtotal": 3402.24,
+      "tax_amount": 0.0,
+      "total_amount": 3504.34,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "11753",
+      "vendor_name": "SanDisk",
+      "invoice_date": "2013-01-04",
+      "line_items": [
+        {
+          "description": "SanDisk Numeric Keypad, USB 8",
+          "quantity": 1,
+          "unit_price": 425.28
+        }
+      ],
+      "subtotal": 3402.24,
+      "tax_amount": 0,
+      "total_amount": 3504.34,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"11753\",\n  \"vendor_name\": \"SanDisk\",\n  \"invoice_date\": \"2013-01-04\",\n  \"line_items\": [\n    {\n      \"description\": \"SanDisk Numeric Keypad, USB 8\",\n      \"quantity\": 1,\n      \"unit_price\": 425.28\n    }\n  ],\n  \"subtotal\": 3402.24,\n  \"tax_amount\": 0,\n  \"total_amount\": 3504.34,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-10338",
+    "document_preview": "SuperStore INVOICE # 10338 Date: Sep 26 2012 Bill To: Ship To: Ship Mode: Standard Class Christina Anderson Littlehampton, England, United Balance Due: $9,616.19 Kingdom Item Quantity Rate Amount Brother Wireless Fax, Digital 5 $1,892.25...",
+    "gold_json": {
+      "invoice_number": "10338",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-09-26",
+      "line_items": [
+        {
+          "description": "Brother Wireless Fax, Digital",
+          "quantity": 5,
+          "unit_price": 1892.25
+        }
+      ],
+      "subtotal": 9461.25,
+      "tax_amount": 0.0,
+      "total_amount": 9616.19,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "10338",
+      "vendor_name": "Brother Wireless Fax, Digital",
+      "invoice_date": "2012-09-26",
+      "line_items": [
+        {
+          "description": "Brother Wireless Fax, Digital",
+          "quantity": 5,
+          "unit_price": 1892.25
+        }
+      ],
+      "subtotal": 9461.25,
+      "tax_amount": 0,
+      "total_amount": 9616.19,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"10338\",\n  \"vendor_name\": \"Brother Wireless Fax, Digital\",\n  \"invoice_date\": \"2012-09-26\",\n  \"line_items\": [\n    {\n      \"description\": \"Brother Wireless Fax, Digital\",\n      \"quantity\": 5,\n      \"unit_price\": 1892.25\n    }\n  ],\n  \"subtotal\": 9461.25,\n  \"tax_amount\": 0,\n  \"total_amount\": 9616.19,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-10340",
+    "document_preview": "SuperStore INVOICE # 10340 Date: Sep 26 2012 Bill To: Ship To: Ship Mode: Standard Class Christina Anderson Littlehampton, England, United Balance Due: $3,536.20 Kingdom Item Quantity Rate Amount Brother Wireless Fax, Color 3 $1,140.75 $...",
+    "gold_json": {
+      "invoice_number": "10340",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-09-26",
+      "line_items": [
+        {
+          "description": "Brother Wireless Fax, Color",
+          "quantity": 3,
+          "unit_price": 1140.75
+        }
+      ],
+      "subtotal": 3422.25,
+      "tax_amount": 0.0,
+      "total_amount": 3536.2,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "10340",
+      "vendor_name": "Brother Wireless Fax, Color",
+      "invoice_date": "2012-09-26",
+      "line_items": [
+        {
+          "description": "Brother Wireless Fax, Color",
+          "quantity": 3,
+          "unit_price": 1140.75
+        },
+        {
+          "description": "Copiers, Technology, TEC-CO-3608",
+          "quantity": 1,
+          "unit_price": 0
+        }
+      ],
+      "subtotal": 3422.25,
+      "tax_amount": 0,
+      "total_amount": 3536.2,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"10340\",\n  \"vendor_name\": \"Brother Wireless Fax, Color\",\n  \"invoice_date\": \"2012-09-26\",\n  \"line_items\": [\n    {\n      \"description\": \"Brother Wireless Fax, Color\",\n      \"quantity\": 3,\n      \"unit_price\": 1140.75\n    },\n    {\n      \"description\": \"Copiers, Technology, TEC-CO-3608\",\n      \"quantity\": 1,\n      \"unit_price\": 0\n    }\n  ],\n  \"subtotal\": 3422.25,\n  \"tax_amount\": 0,\n  \"total_amount\": 3536.2,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-11911",
+    "document_preview": "SuperStore INVOICE # 11911 Date: Jul 03 2012 Bill To: Ship To: Ship Mode: Standard Class Christy Brittain Drancy, Ile-de- France, France Balance Due: $5,146.03 Item Quantity Rate Amount Eldon File Cart, Blue 7 $799.85 $5,598.94 Storage, ...",
+    "gold_json": {
+      "invoice_number": "11911",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-07-03",
+      "line_items": [
+        {
+          "description": "Eldon File Cart, Blue",
+          "quantity": 7,
+          "unit_price": 799.85
+        }
+      ],
+      "subtotal": 5598.94,
+      "tax_amount": 0.0,
+      "total_amount": 5146.03,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "11911",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-07-03",
+      "line_items": [
+        {
+          "description": "Eldon File Cart, Blue",
+          "quantity": 7,
+          "unit_price": 799.85
+        }
+      ],
+      "subtotal": 5598.94,
+      "tax_amount": 0,
+      "total_amount": 5146.03,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"11911\",\n  \"vendor_name\": \"SuperStore\",\n  \"invoice_date\": \"2012-07-03\",\n  \"line_items\": [\n    {\n      \"description\": \"Eldon File Cart, Blue\",\n      \"quantity\": 7,\n      \"unit_price\": 799.85\n    }\n  ],\n  \"subtotal\": 5598.94,\n  \"tax_amount\": 0,\n  \"total_amount\": 5146.03,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-11877",
+    "document_preview": "SuperStore INVOICE # 11877 Date: Sep 13 2012 Bill To: Ship To: Ship Mode: Same Day Corey-Lock Worcester, England, United Kingdom Balance Due: $3,885.15 Item Quantity Rate Amount Sanford Markers, Water Color 12 $317.16 $3,805.92 Art, Offi...",
+    "gold_json": {
+      "invoice_number": "11877",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-09-13",
+      "line_items": [
+        {
+          "description": "Sanford Markers, Water Color",
+          "quantity": 12,
+          "unit_price": 317.16
+        }
+      ],
+      "subtotal": 3805.92,
+      "tax_amount": 0.0,
+      "total_amount": 3885.15,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "11877",
+      "vendor_name": "Art, Office Supplies",
+      "invoice_date": "2012-09-13",
+      "line_items": [
+        {
+          "description": "Sanford Markers, Water Color",
+          "quantity": 12,
+          "unit_price": 317.16
+        }
+      ],
+      "subtotal": 3805.92,
+      "tax_amount": 0,
+      "total_amount": 3885.15,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"11877\",\n  \"vendor_name\": \"Art, Office Supplies\",\n  \"invoice_date\": \"2012-09-13\",\n  \"line_items\": [\n    {\n      \"description\": \"Sanford Markers, Water Color\",\n      \"quantity\": 12,\n      \"unit_price\": 317.16\n    }\n  ],\n  \"subtotal\": 3805.92,\n  \"tax_amount\": 0,\n  \"total_amount\": 3885.15,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-11221",
+    "document_preview": "SuperStore INVOICE # 11221 Date: May 26 2012 Bill To: Ship To: Ship Mode: First Class David Philippe Pulheim, North Rhine-Westphalia, Balance Due: $2,643.16 Germany Item Quantity Rate Amount Safco Floating Shelf Set, Pine 4 $713.12 $2,85...",
+    "gold_json": {
+      "invoice_number": "11221",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-05-26",
+      "line_items": [
+        {
+          "description": "Safco Floating Shelf Set, Pine",
+          "quantity": 4,
+          "unit_price": 713.12
+        }
+      ],
+      "subtotal": 2852.5,
+      "tax_amount": 0.0,
+      "total_amount": 2643.16,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "11221",
+      "vendor_name": "Safco",
+      "invoice_date": "2012-05-26",
+      "line_items": [
+        {
+          "description": "Floating Shelf Set, Pine",
+          "quantity": 4,
+          "unit_price": 713.12
+        },
+        {
+          "description": "Bookcases, Furniture, FUR-BO-5779",
+          "quantity": 1,
+          "unit_price": 0
+        }
+      ],
+      "subtotal": 2852.5,
+      "tax_amount": 0,
+      "total_amount": 2643.16,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"11221\",\n  \"vendor_name\": \"Safco\",\n  \"invoice_date\": \"2012-05-26\",\n  \"line_items\": [\n    {\n      \"description\": \"Floating Shelf Set, Pine\",\n      \"quantity\": 4,\n      \"unit_price\": 713.12\n    },\n    {\n      \"description\": \"Bookcases, Furniture, FUR-BO-5779\",\n      \"quantity\": 1,\n      \"unit_price\": 0\n    }\n  ],\n  \"subtotal\": 2852.5,\n  \"tax_amount\": 0,\n  \"total_amount\": 2643.16,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-11645",
+    "document_preview": "SuperStore INVOICE # 11645 Date: Mar 13 2012 Bill To: Ship To: Ship Mode: Second Class Eugene Barchas Leipzig, Saxony, Germany Balance Due: $17,301.93 Item Quantity Rate Amount Hoover Stove, Red 6 $3,069.74 $18,418.43 Appliances, Office ...",
+    "gold_json": {
+      "invoice_number": "11645",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-03-13",
+      "line_items": [
+        {
+          "description": "Hoover Stove, Red",
+          "quantity": 6,
+          "unit_price": 3069.74
+        }
+      ],
+      "subtotal": 18418.43,
+      "tax_amount": 0.0,
+      "total_amount": 17301.93,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "11645",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-03-13",
+      "line_items": [
+        {
+          "description": "Hoover Stove, Red",
+          "quantity": 6,
+          "unit_price": 3069.74
+        }
+      ],
+      "subtotal": 18418.43,
+      "tax_amount": 0,
+      "total_amount": 17301.93,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"11645\",\n  \"vendor_name\": \"SuperStore\",\n  \"invoice_date\": \"2012-03-13\",\n  \"line_items\": [\n    {\n      \"description\": \"Hoover Stove, Red\",\n      \"quantity\": 6,\n      \"unit_price\": 3069.74\n    }\n  ],\n  \"subtotal\": 18418.43,\n  \"tax_amount\": 0,\n  \"total_amount\": 17301.93,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-11508",
+    "document_preview": "SuperStore INVOICE # 11508 Date: Aug 14 2012 Bill To: Ship To: Ship Mode: Second Class Evan Henry Schwerin, Mecklenburg- Balance Due: $10,736.19 Vorpommern, Germany Item Quantity Rate Amount Hon Swivel Stool, Black 9 $1,305.88 $11,752.94...",
+    "gold_json": {
+      "invoice_number": "11508",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-08-14",
+      "line_items": [
+        {
+          "description": "Hon Swivel Stool, Black",
+          "quantity": 9,
+          "unit_price": 1305.88
+        }
+      ],
+      "subtotal": 11752.94,
+      "tax_amount": 0.0,
+      "total_amount": 10736.19,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "11508",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-08-14",
+      "line_items": [
+        {
+          "description": "Hon Swivel Stool, Black",
+          "quantity": 9,
+          "unit_price": 1305.88
+        }
+      ],
+      "subtotal": 11752.94,
+      "tax_amount": 0,
+      "total_amount": 10736.19,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"11508\",\n  \"vendor_name\": \"SuperStore\",\n  \"invoice_date\": \"2012-08-14\",\n  \"line_items\": [\n    {\n      \"description\": \"Hon Swivel Stool, Black\",\n      \"quantity\": 9,\n      \"unit_price\": 1305.88\n    }\n  ],\n  \"subtotal\": 11752.94,\n  \"tax_amount\": 0,\n  \"total_amount\": 10736.19,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-11789",
+    "document_preview": "SuperStore INVOICE # 11789 Date: Sep 15 2012 Bill To: Ship To: Ship Mode: Standard Class Fred Harton Woking, England, United Kingdom Balance Due: $8,535.46 Item Quantity Rate Amount Hon Training Table, Adjustable Height 5 $1,674.45 $8,37...",
+    "gold_json": {
+      "invoice_number": "11789",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-09-15",
+      "line_items": [
+        {
+          "description": "Hon Training Table, Adjustable Height",
+          "quantity": 5,
+          "unit_price": 1674.45
+        }
+      ],
+      "subtotal": 8372.25,
+      "tax_amount": 0.0,
+      "total_amount": 8535.46,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "11789",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-09-15",
+      "line_items": [
+        {
+          "description": "Hon Training Table, Adjustable Height",
+          "quantity": 5,
+          "unit_price": 1674.45
+        }
+      ],
+      "subtotal": 8372.25,
+      "tax_amount": 0,
+      "total_amount": 8535.46,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"11789\",\n  \"vendor_name\": \"SuperStore\",\n  \"invoice_date\": \"2012-09-15\",\n  \"line_items\": [\n    {\n      \"description\": \"Hon Training Table, Adjustable Height\",\n      \"quantity\": 5,\n      \"unit_price\": 1674.45\n    }\n  ],\n  \"subtotal\": 8372.25,\n  \"tax_amount\": 0,\n  \"total_amount\": 8535.46,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-10403",
+    "document_preview": "SuperStore INVOICE # 10403 Date: Oct 16 2012 Bill To: Ship To: Ship Mode: Standard Class Greg Tran Barcelona, Catalonia, Spain Balance Due: $1,576.32 Item Quantity Rate Amount Dania Library with Doors, Metal 2 $723.72 $1,447.44 Bookcases...",
+    "gold_json": {
+      "invoice_number": "10403",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-10-16",
+      "line_items": [
+        {
+          "description": "Dania Library with Doors, Metal",
+          "quantity": 2,
+          "unit_price": 723.72
+        }
+      ],
+      "subtotal": 1447.44,
+      "tax_amount": 0.0,
+      "total_amount": 1576.32,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "10403",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-10-16",
+      "line_items": [
+        {
+          "description": "Dania Library with Doors, Metal",
+          "quantity": 2,
+          "unit_price": 723.72
+        },
+        {
+          "description": "Bookcases, Furniture, FUR-BO-3901",
+          "quantity": 1,
+          "unit_price": 0
+        }
+      ],
+      "subtotal": 1447.44,
+      "tax_amount": 0,
+      "total_amount": 1576.32,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"10403\",\n  \"vendor_name\": \"SuperStore\",\n  \"invoice_date\": \"2012-10-16\",\n  \"line_items\": [\n    {\n      \"description\": \"Dania Library with Doors, Metal\",\n      \"quantity\": 2,\n      \"unit_price\": 723.72\n    },\n    {\n      \"description\": \"Bookcases, Furniture, FUR-BO-3901\",\n      \"quantity\": 1,\n      \"unit_price\": 0\n    }\n  ],\n  \"subtotal\": 1447.44,\n  \"tax_amount\": 0,\n  \"total_amount\": 1576.32,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-10404",
+    "document_preview": "SuperStore INVOICE # 10404 Date: Oct 16 2012 Bill To: Ship To: Ship Mode: Standard Class Greg Tran Barcelona, Catalonia, Spain Balance Due: $7,678.17 Item Quantity Rate Amount Hon Executive Leather Armchair, Adjustable 5 $1,838.52 $9,192...",
+    "gold_json": {
+      "invoice_number": "10404",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-10-16",
+      "line_items": [
+        {
+          "description": "Hon Executive Leather Armchair, Adjustable",
+          "quantity": 5,
+          "unit_price": 1838.52
+        }
+      ],
+      "subtotal": 9192.6,
+      "tax_amount": 0.0,
+      "total_amount": 7678.17,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "10404",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-10-16",
+      "line_items": [
+        {
+          "description": "Hon Executive Leather Armchair, Adjustable",
+          "quantity": 5,
+          "unit_price": 1838.52
+        }
+      ],
+      "subtotal": 9192.6,
+      "tax_amount": 0,
+      "total_amount": 7678.17,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"10404\",\n  \"vendor_name\": \"SuperStore\",\n  \"invoice_date\": \"2012-10-16\",\n  \"line_items\": [\n    {\n      \"description\": \"Hon Executive Leather Armchair, Adjustable\",\n      \"quantity\": 5,\n      \"unit_price\": 1838.52\n    }\n  ],\n  \"subtotal\": 9192.6,\n  \"tax_amount\": 0,\n  \"total_amount\": 7678.17,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  },
+  {
+    "example_id": "superstore-11633",
+    "document_preview": "SuperStore INVOICE # 11633 Date: Nov 03 2012 Bill To: Ship To: Ship Mode: Second Class Heather Kirkland Drancy, Ile-de- France, France Balance Due: $5,825.40 Item Quantity Rate Amount Konica Receipt Printer, White 8 $820.49 $6,563.90 Mac...",
+    "gold_json": {
+      "invoice_number": "11633",
+      "vendor_name": "SuperStore",
+      "invoice_date": "2012-11-03",
+      "line_items": [
+        {
+          "description": "Konica Receipt Printer, White",
+          "quantity": 8,
+          "unit_price": 820.49
+        }
+      ],
+      "subtotal": 6563.9,
+      "tax_amount": 0.0,
+      "total_amount": 5825.4,
+      "currency": "USD"
+    },
+    "prediction_json": {
+      "invoice_number": "11633",
+      "vendor_name": "Konica",
+      "invoice_date": "2012-11-03",
+      "line_items": [
+        {
+          "description": "Konica Receipt Printer, White",
+          "quantity": 8,
+          "unit_price": 820.49
+        }
+      ],
+      "subtotal": 6563.9,
+      "tax_amount": 0,
+      "total_amount": 5825.4,
+      "currency": "USD"
+    },
+    "raw_output": "{\n  \"invoice_number\": \"11633\",\n  \"vendor_name\": \"Konica\",\n  \"invoice_date\": \"2012-11-03\",\n  \"line_items\": [\n    {\n      \"description\": \"Konica Receipt Printer, White\",\n      \"quantity\": 8,\n      \"unit_price\": 820.49\n    }\n  ],\n  \"subtotal\": 6563.9,\n  \"tax_amount\": 0,\n  \"total_amount\": 5825.4,\n  \"currency\": \"USD\"\n}",
+    "is_valid": true,
+    "validation_errors": []
+  }
+]
