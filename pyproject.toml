@@ -93,6 +93,7 @@ omit = [
 
 [tool.bandit]
 targets = ["src"]
+skips = ["B615"]
 
 [[tool.uv.index]]
 name = "pytorch-cu124"

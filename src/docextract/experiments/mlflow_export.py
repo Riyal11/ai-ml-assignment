@@ -40,7 +40,7 @@ def _ms_to_iso(ms: int | None) -> str | None:
 
 def _run_payload(run: Any) -> dict[str, Any]:
     params = dict(run.data.params)
-    metrics = {key: value for key, value in run.data.metrics.items()}
+    metrics = dict(run.data.metrics.items())
     tags = dict(run.data.tags)
     mandated = {field: params.get(field) for field in _MANDATED_FIELDS}
     if mandated.get("run_id") is None and "custom_run_id" in params:
@@ -119,12 +119,25 @@ def export_mlflow_runs(
     logger.info("MLflow tracking URI: %s", mlflow.get_tracking_uri())
 
     experiment = client.get_experiment_by_name(experiment_name)
+    if experiment is None and experiment_name != "Default":
+        logger.warning(
+            "Experiment %r not found; falling back to %r",
+            experiment_name,
+            "Default",
+        )
+        experiment = client.get_experiment_by_name("Default")
     output_dir.mkdir(parents=True, exist_ok=True)
 
     if experiment is None:
-        logger.warning("Experiment %r not found; writing empty summary only", experiment_name)
+        logger.warning("No MLflow experiment found; writing empty summary only")
         _write_summary_csv(output_dir, [])
         return 0
+
+    logger.info(
+        "Exporting runs from experiment %r (id=%s)",
+        experiment.name,
+        experiment.experiment_id,
+    )
 
     runs = client.search_runs(experiment_ids=[experiment.experiment_id])
     if not runs:

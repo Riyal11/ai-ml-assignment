@@ -92,6 +92,26 @@ Examined failed PDFs manually — they are empty placeholder/stub files. Filenam
 - **Follow-up Run ID**: retry training with `invoices.jsonl` (auto-convert) or `sft.jsonl`
 - **Status**: resolved
 
+### Run ID: eval-base-20260813
+- **Category**: evaluation
+- **Observed**: Base model golden eval failed on Windows when `--model-path Qwen/Qwen3-4B-Instruct-2507` was passed: first `FileNotFoundError` (path treated as non-Hub), then `HFValidationError` for repo id `Qwen\Qwen3-4B-Instruct-2507` (backslash from `Path` on Windows).
+- **Diagnosis**: `is_loadable_model()` checked `"/" in str(model_path)`; Windows normalizes to backslash. `HfBaseModelPredictor` received `str(Path(...))` instead of Hub-style `org/name`.
+- **Change**: `inference.py` — use `model_path.as_posix()` for Hub IDs and `is_loadable_model()` detection; add `HfBaseModelPredictor` for adapter-free base eval. `pipeline.py` — add `field_precision_recall_f1` to `results.json`.
+- **Follow-up Run ID**: eval-base-20260813 (third attempt succeeded)
+- **Status**: resolved
+
+### Run ID: 20260813-153345-qlora (eval regression vs base)
+- **Category**: structured-output
+- **Observed**: Golden-set comparison after run-002 completed:
+  - **Base** (`Qwen/Qwen3-4B-Instruct-2507`, no adapter): schema **100%**, EM **0.91**, F1 **0.86** (`experiments/eval-base/results.json`)
+  - **Run-001** (r=8, 3 epochs): F1 **0.72**, EM **0.74**
+  - **Run-002** (r=16, 5 epochs): F1 **0.74**, EM **0.77** (`experiments/eval-ft-run-002/results.json`)
+  Training loss improved (run-001 `0.29` → run-002 `0.24`) but golden F1 **decreased** vs base by **~0.12**.
+- **Diagnosis**: Base instruct model already extracts valid schema JSON on SuperStore golden; QLoRA SFT on 830 English invoices appears to **hurt** field-level accuracy (possible overfit to training layout, degraded `vendor_name` / `line_items`). Per-field on base: `vendor_name` F1 **0.36** (bottleneck), `line_items` F1 **0.76**; scalar money/date/currency fields at **1.0**. Gap is not fixed by higher rank or more epochs alone.
+- **Change**: **Do not promote run-002** for merge/quantize/submission. Use **base model** for quality gate and model card (conditional go: fine-tuning documented but not deployed). Run-002 artifacts retained for assignment evidence.
+- **Follow-up Run ID**: N/A (base selected; no further SFT sweep planned)
+- **Status**: resolved
+
 ## Training Runs
 
 ### Run 001: First QLoRA Training — SUCCESS
@@ -135,10 +155,76 @@ Post-training evaluation on golden and synthetic Hindi sets (`scripts/evaluate.p
 **Findings**
 
 - Hindi performance is **strong** on simple synthetic inputs.
-- Gap is **not language-based** — it is **complexity-based**.
+- Gap is **not language-based**, it is **complexity-based**.
 - English golden set has harder cases: multiple line items, discounts, shipping.
 - Model learned the schema pattern; struggles with exact value extraction on complex invoices.
 - No Hindi training data needed for this assignment.
 - Qwen3-4B base model handles Devanagari via pretraining.
 
 **Next steps:** Focus improvement on English complexity via more epochs / higher rank.
+
+### Run 002: QLoRA r=16 Restart — SUCCESS (eval regression)
+
+| Setting | Value |
+|---------|-------|
+| **Method** | QLoRA |
+| **LoRA** | r=16, alpha=32 |
+| **Optimizer** | LR=0.00015, scheduler=cosine |
+| **Epochs** | 5 |
+| **Config** | `configs/train/qlora_rtx4060_v2.yaml` |
+| **Output** | `artifacts/run-002` |
+
+**Results**
+
+- Training time: **6,252s** (~1h 44min)
+- Final `train_loss`: **0.236**
+- Token accuracy: **94.81%**
+- Trainable params: **~11.8M** (0.53%)
+- Peak VRAM: **4,860 MB** (no OOM)
+
+**Golden eval:** F1 **0.74**, EM **0.77**, schema **100%** — **below** run-001 and **well below** base model (see eval regression incident).
+
+### Base vs Fine-Tuned Golden Comparison
+
+| Model | F1 | EM | Schema | Notes |
+|-------|-----|-----|--------|-------|
+| Base `Qwen3-4B-Instruct-2507` | **0.86** | **0.91** | 100% | Passes F1 ≥ 0.85 gate |
+| Run-001 (r=8) | 0.72 | 0.74 | 100% | |
+| Run-002 (r=16) | 0.74 | 0.77 | 100% | Higher train loss ↓, golden F1 ↑ only vs run-001 |
+
+**Decision:** Submit/document **base model** for extraction; fine-tuning runs kept as negative result (train loss ≠ golden improvement).
+
+### Incident 003: Catastrophic Forgetting on Fine-Tuned Model
+
+**Run ID:** run-002 (r=16, 5 epochs, 830 EN SuperStore invoices)
+
+**Category:** catastrophic-forgetting
+
+**Observed:**
+
+- Base model golden F1: **0.857** (passes ≥ 0.85 threshold)
+- Fine-tuned model golden F1: **0.738** (fails threshold)
+- Delta: **−11.9%** F1, **−14.3%** Exact Match
+- Benchmark forgetting: base F1 **0.847** → run-002 F1 **0.755** (**10.9%** relative drop; threshold ≤ 5%)
+- Per-field (golden): `vendor_name` base **0.36** → run-002 **0.00**; `line_items` base **0.76** → run-002 **0.67**
+
+**Diagnosis:**
+
+- Training data was homogeneous: single vendor (SuperStore), single layout
+- Model learned degenerate shortcut: `vendor_name` is always "SuperStore"
+- Lost general capability to extract vendor names from diverse documents
+- `line_items` extraction also degraded (nested array overfitting)
+
+**Change:**
+
+- Decision: **Do NOT deploy** fine-tuned model
+- Deploy **base Qwen3-4B-Instruct-2507** instead
+- Document as **conditional go** with evidence in `docs/model_card.md`
+
+**Status:** resolved (evidence-based decision)
+
+### Run ID: pre-submission
+- **Category**: submission-prep
+- **Observed**: Final submission prep — human review batch generation, base-model quality gate fix (`relative_benchmark_drop=0`), GGUF quantization attempt, lint/test validation, and documentation updates.
+- **Change**: `scripts/generate_human_review.py`, `docs/human_review.md`, `docs/human_review_batch.json`, `experiments/eval-base/results.json`, `src/docextract/api/inference.py`, `src/docextract/eval/inference.py`, `SUMMARY.md`, `docs/model_card.md`
+- **Status**: resolved

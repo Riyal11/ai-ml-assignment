@@ -1,17 +1,17 @@
 # Model Card: docextract-Qwen3-4B-Invoice
 
-Model card for the fine-tuned invoice extraction model. Follows the [MLflow Model
-Card](https://mlflow.org/docs/latest/model-registry.html#model-cards) structure.
-Quantitative results are placeholders until the first training and evaluation run
-complete.
+Model card for the invoice extraction system. Production deployment uses the
+**base** Qwen3-4B-Instruct model; QLoRA fine-tuning was attempted but degraded
+golden-set performance (documented below). Follows the [MLflow Model Card](https://mlflow.org/docs/latest/model-registry.html#model-cards) structure.
 
 ## Model Details
 
 | Property | Value |
 |----------|-------|
-| **Model name** | docextract-Qwen3-4B-Invoice |
+| **Model name** | docextract-Qwen3-4B-Invoice (base model for serving) |
 | **Base model** | [Qwen/Qwen3-4B-Instruct-2507](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507) |
-| **Fine-tuning method** | LoRA / QLoRA via PEFT + TRL (`SFTTrainer`) |
+| **Fine-tuning method** | QLoRA via PEFT + TRL attempted (run-001 r=8, run-002 r=16); **not deployed** |
+| **Production artifact** | Base model (no adapter merge) |
 | **Model type** | Causal language model, instruction-tuned |
 | **Parameters** | ~3.8B base; trainable adapter params logged per run |
 | **License** | Apache 2.0 |
@@ -60,16 +60,17 @@ Performance may vary based on:
 
 ## Metrics
 
-Automated evaluation on validation and golden splits. Status reflects acceptance
-thresholds in `docs/acceptance_criteria.md`.
+Automated evaluation on golden and benchmark splits. Status reflects acceptance
+thresholds in `docs/acceptance_criteria.md`. Results from `experiments/eval-base/`
+(English golden, 50 examples) unless noted.
 
-| Metric | Validation | Golden | Threshold | Status |
-|--------|-----------|--------|-----------|--------|
-| Schema Validity Rate | TBD | TBD | ≥ 90% | TBD |
-| Field-level F1 | TBD | TBD | ≥ 0.85 | TBD |
-| Exact Match | TBD | TBD | ≥ 0.75 | TBD |
-| Catastrophic Forgetting (retention ratio) | TBD | TBD | ≥ 0.90 | TBD |
-| Hindi F1 Gap (|EN F1 − HI F1|) | TBD | TBD | ≤ 0.05 | TBD |
+| Metric | Base Model (Golden) | Fine-Tuned run-002 (Golden) | Threshold | Status |
+|--------|---------------------|----------------------------|-----------|--------|
+| Schema Validity Rate | **100%** | **100%** | ≥ 90% | Pass |
+| Field-level F1 | **0.857** | 0.738 | ≥ 0.85 | **Base passes; FT fails** |
+| Exact Match | **0.910** | 0.766 | ≥ 0.75 | Pass (base) |
+| Catastrophic Forgetting (relative F1 drop on benchmark) | — | **10.9%** (retention 0.89) | ≤ 5% | **FT fails; evidence of forgetting** |
+| Hindi F1 (synthetic eval, 50 ex) | **0.960** | — | ≤ 0.05 gap vs EN | Pass (base multilingual) |
 
 Human review metrics (see `docs/human_review.md`):
 
@@ -82,19 +83,19 @@ Human review metrics (see `docs/human_review.md`):
 
 | Split | Size | Purpose | Training access |
 |-------|------|---------|-----------------|
-| Training set | ~300–500 synthetic examples | Supervised fine-tuning | Read |
-| Validation set | Derived from training split | Loss monitoring, checkpoint selection | Loss only |
-| Golden set | ~50 held-out examples | Final certification | **Never** |
-| Benchmark set | General-capability subset | Catastrophic forgetting detection | **Never** |
+| Training set | 830 synthetic SuperStore examples | Supervised fine-tuning (QLoRA) | Read |
+| Validation set | 92 examples | Held-out from extraction split | Loss only |
+| Golden set | 50 held-out examples | Final certification | **Never** |
+| Benchmark set | 20 examples | Catastrophic forgetting detection | **Never** |
 
 Split isolation is enforced by `guard_train_path()` in `src/docextract/data/dataset.py`.
 See `docs/data_contract.md` for the full contract.
 
 ## Training Data
 
-- **Source:** Synthetic document → JSON pairs (no real customer data)
-- **Languages:** Mixed English and Hindi
-- **Domain:** Invoices, purchase orders, and similar structured business documents
+- **Source:** Synthetic SuperStore PDF extraction → JSON pairs (no real customer data)
+- **Languages:** English only in training (830 examples); Hindi via base model pretraining
+- **Domain:** SuperStore invoices (single vendor layout — see caveats)
 - **Format:** Chat-templated SFT examples (`src/docextract/data/format_sft.py`)
 - **Schema:** Fixed 8-field invoice schema with `additionalProperties: false`
 
@@ -106,29 +107,34 @@ Planned breakdowns to run after the first evaluation:
 
 | Language | Schema Validity | Field F1 | Exact Match |
 |----------|----------------|----------|-------------|
-| English (en) | TBD | TBD | TBD |
-| Hindi (hi) | TBD | TBD | TBD |
+| English (en) — base | 100% | 0.857 | 0.910 |
+| Hindi (hi) — base, synthetic eval | 100% | 0.960 | 0.960 |
 
-### Per-field
+### Per-field (English golden, base model)
 
 | Field | Precision | Recall | F1 |
 |-------|-----------|--------|-----|
-| invoice_number | TBD | TBD | TBD |
-| vendor_name | TBD | TBD | TBD |
-| invoice_date | TBD | TBD | TBD |
-| line_items | TBD | TBD | TBD |
-| subtotal | TBD | TBD | TBD |
-| tax_amount | TBD | TBD | TBD |
-| total_amount | TBD | TBD | TBD |
-| currency | TBD | TBD | TBD |
+| invoice_number | 1.00 | 1.00 | 1.00 |
+| vendor_name | 0.36 | 0.36 | 0.36 |
+| invoice_date | 1.00 | 1.00 | 1.00 |
+| line_items | 0.74 | 0.81 | 0.76 |
+| subtotal | 1.00 | 1.00 | 1.00 |
+| tax_amount | 1.00 | 1.00 | 1.00 |
+| total_amount | 1.00 | 1.00 | 1.00 |
+| currency | 1.00 | 1.00 | 1.00 |
 
-### Line-item subfields
+Fine-tuned run-002 per-field breakdown (golden, `experiments/eval-ft-run-002-v2/`):
 
-| Subfield | Precision | Recall | F1 |
-|----------|-----------|--------|-----|
-| description | TBD | TBD | TBD |
-| quantity | TBD | TBD | TBD |
-| unit_price | TBD | TBD | TBD |
+| Field | Base F1 | run-002 F1 | Delta |
+|-------|---------|------------|-------|
+| invoice_number | 1.00 | 1.00 | 0.00 |
+| vendor_name | 0.36 | **0.00** | −0.36 |
+| invoice_date | 1.00 | 1.00 | 0.00 |
+| line_items | 0.76 | 0.67 | −0.09 |
+| subtotal | 1.00 | 0.98 | −0.02 |
+| tax_amount | 1.00 | 0.42 | −0.58 |
+| total_amount | 1.00 | 0.96 | −0.04 |
+| currency | 1.00 | 1.00 | 0.00 |
 
 ## Ethical Considerations
 
@@ -145,6 +151,9 @@ Planned breakdowns to run after the first evaluation:
 
 ### Known limitations
 
+- **Fine-tuning on homogeneous SuperStore data caused catastrophic forgetting** — QLoRA runs (r=8, r=16) reduced golden F1 from 0.86 (base) to ~0.74 (FT)
+- Base model confuses `vendor_name` vs customer on some layouts (F1 0.36 on golden)
+- Nested `line_items` are the second bottleneck (F1 0.76 on base)
 - Struggles with handwritten documents and low-quality scans
 - Date format variations beyond `YYYY-MM-DD` are not guaranteed
 - Currency symbols (₹, $) may appear instead of ISO 4217 codes (`INR`, `USD`)
@@ -165,12 +174,24 @@ validation before downstream ingestion.
 
 ## Go / No-Go Recommendation
 
-> **Status**: [PENDING FIRST TRAINING RUN]
->
-> **Evidence**:
-> - Schema validity: TBD% (threshold: ≥ 90%)
-> - Field F1: TBD (threshold: ≥ 0.85)
-> - Forgetting: TBD (threshold: ≥ 0.90)
-> - Human review pass rate: TBD (threshold: ≥ 80% scoring ≥ 4/6)
->
-> **Recommendation**: [GO / CONDITIONAL GO / NO-GO — to be determined after evaluation]
+**Status: CONDITIONAL GO — Use Base Model**
+
+**Evidence:**
+
+| Metric | Base Model | Fine-Tuned (run-002) | Threshold | Winner |
+|--------|------------|----------------------|-----------|--------|
+| Schema Validity | 100% | 100% | ≥ 90% | Tie |
+| Field F1 | **0.857** | 0.738 | ≥ 0.85 | **Base** |
+| Exact Match | **0.910** | 0.766 | ≥ 0.75 | **Base** |
+
+**Finding:** Fine-tuning on 830 homogeneous SuperStore invoices caused catastrophic forgetting. The fine-tuned model overfit to the single-vendor layout and lost general extraction capability. Training loss improved (0.29 → 0.24) while golden F1 dropped ~12 points vs base.
+
+**Recommendation:**
+
+- Deploy the **base Qwen3-4B-Instruct-2507** model for production extraction.
+- Retain run-001/run-002 artifacts as evidence that fine-tuning was attempted and evaluated.
+- Future work: retrain with diverse vendor names, invoice layouts, and mixed-language data.
+
+**Hindi:** Base model handles Devanagari via native multilingual pretraining. Synthetic eval (`data/golden/hindi_eval.jsonl`, 50 examples): F1 **0.96**, schema **100%**.
+
+**Catastrophic forgetting (benchmark, 20 examples):** Base F1 **0.847** vs run-002 F1 **0.755** — **10.9% relative drop** (threshold ≤ 5%). Fine-tuned model fails the forgetting gate; another reason to deploy base.

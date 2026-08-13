@@ -31,7 +31,7 @@ def fake_tokenizer() -> FakeTokenizer:
 def test_load_tokenizer_returns_tokenizer(monkeypatch, fake_tokenizer) -> None:
     monkeypatch.setattr(
         "docextract.data.tokenizer_utils.AutoTokenizer.from_pretrained",
-        lambda model_id, revision=None: fake_tokenizer,
+        lambda model_id, revision=None, local_files_only=False: fake_tokenizer,
     )
     monkeypatch.setattr(
         "docextract.data.tokenizer_utils.PreTrainedTokenizerFast",
@@ -42,7 +42,8 @@ def test_load_tokenizer_returns_tokenizer(monkeypatch, fake_tokenizer) -> None:
 
 
 def test_load_tokenizer_oserror_raises(monkeypatch) -> None:
-    def _fail(model_id: str, revision: str | None = None):
+    def _fail(model_id: str, revision: str | None = None, local_files_only: bool = False) -> None:
+        _ = (model_id, revision, local_files_only)
         raise OSError("boom")
 
     monkeypatch.setattr("docextract.data.tokenizer_utils.AutoTokenizer.from_pretrained", _fail)

@@ -12,6 +12,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Literal
 
+from docextract.eval.inference import is_loadable_model
+
 logger = logging.getLogger(__name__)
 
 Quantization = Literal["none", "gguf", "awq"]
@@ -112,8 +114,15 @@ def _reset_memory_stats() -> None:
         return
 
 
+def _resolve_model_ref(model_path: Path) -> str:
+    """Return a HuggingFace ``from_pretrained`` reference (Hub ID or local path)."""
+    if is_loadable_model(model_path) and not model_path.exists():
+        return model_path.as_posix()
+    return str(model_path)
+
+
 def _benchmark_transformers(
-    model_path: Path,
+    model_ref: str,
     prompts: list[dict[str, Any]],
     num_prompts: int,
     max_tokens: int,
@@ -131,9 +140,9 @@ def _benchmark_transformers(
         logger.error(msg)
         raise RuntimeError(msg) from exc
 
-    tokenizer = AutoTokenizer.from_pretrained(model_path)
+    tokenizer = AutoTokenizer.from_pretrained(model_ref)
     model = AutoModelForCausalLM.from_pretrained(
-        model_path,
+        model_ref,
         torch_dtype="auto",
         device_map="auto",
     )
@@ -243,7 +252,9 @@ def benchmark(
         ValueError: If ``quantization`` is unsupported.
         RuntimeError: If required inference dependencies are missing.
     """
-    if not model_path.exists():
+    model_ref = _resolve_model_ref(model_path)
+    is_hub = is_loadable_model(model_path) and not model_path.exists()
+    if not is_hub and not model_path.exists():
         raise FileNotFoundError(f"model path not found: {model_path}")
     if quantization == "awq":
         raise ValueError("awq benchmarking is not implemented; use none or gguf")
@@ -258,7 +269,7 @@ def benchmark(
     measure_prompts = prompts[:num_prompts]
     logger.info(
         "Benchmarking %s (%s): warmup=%d, measure=%d",
-        model_path,
+        model_ref,
         quantization,
         len(warmup_prompts),
         len(measure_prompts),
@@ -269,7 +280,7 @@ def benchmark(
     def _run_batch(batch: list[dict[str, Any]]) -> tuple[list[float], list[float], list[int]]:
         if quantization == "gguf":
             return _benchmark_gguf(model_path, batch, len(batch), max_tokens)
-        return _benchmark_transformers(model_path, batch, len(batch), max_tokens)
+        return _benchmark_transformers(model_ref, batch, len(batch), max_tokens)
 
     _run_batch(warmup_prompts)
     _reset_memory_stats()
@@ -280,7 +291,7 @@ def benchmark(
     throughput = total_tokens / total_seconds if total_seconds > 0 else 0.0
 
     return {
-        "model_path": str(model_path),
+        "model_path": model_ref,
         "quantization": quantization,
         "hardware": _detect_hardware(),
         "metrics": {

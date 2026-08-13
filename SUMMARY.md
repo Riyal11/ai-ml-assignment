@@ -11,6 +11,14 @@ docextract assignment.
 | Quantization | **GGUF Q4_K_M** | AWQ as primary | Simpler local path via llama.cpp; AWQ better for vLLM throughput but heavier toolchain for Day 3 |
 | Serving stack | **llama-cpp-python** (+ Transformers for `none`) | vLLM / SGLang | Faster to stand up for a take-home; lower peak throughput and less production polish |
 | Async jobs | **Celery + Redis**, with **sync fallback** | Celery-only | Works without infra for demos; async when `CELERY_BROKER_URL` is set |
+| **Production model** | **Base Qwen3-4B-Instruct-2507** | Fine-tuned QLoRA adapters | Golden F1 0.86 (base) vs 0.74 (run-002); fine-tuning hurt generalization |
+| **Fine-tuning** | Documented negative result (run-001, run-002) | Merge/quantize FT for serving | Homogeneous SuperStore data → catastrophic forgetting |
+
+## Trade-offs revisited
+
+- **Fine-tuning vs base model:** Attempted QLoRA r=8 (run-001) and r=16 (run-002). Both hurt golden-set performance compared to the base instruct model. Chose to deploy the **base model** — an honest, evidence-based decision that still passes the F1 ≥ 0.85 gate.
+- **Data diversity:** The SuperStore training set is too homogeneous (single vendor, single layout) for effective fine-tuning. With another week, would add diverse vendor names, layouts, and mixed-language examples before any retrain.
+- **Hindi:** No Hindi training data; base model multilingual capability suffices (synthetic eval F1 ~0.96).
 
 ## What I'd do differently with another week
 
@@ -29,13 +37,14 @@ docextract assignment.
 
 ## Known weak spots
 
-- **QLoRA on 8 GB GPUs** — requires pinning `device_map={"": 0}` and closing other VRAM consumers; `device_map="auto"` can CPU-offload and break BnB 4-bit training.
-- **`InferenceService` is a stub** — returns dummy JSON; no real HF/GGUF weight load in the API path yet.
-- **Dataset loaders raise `NotImplementedError`** — `load_train_dataset` / `load_eval_dataset` wait on finalized on-disk format.
-- **Evaluation pipeline uses stub predictions** — `_stub_predict` returns `{}`, so metrics are structural only until inference is wired.
-- **No production resilience** — limited retries/circuit breakers on store I/O and model calls.
-- **Benchmarks are scaffolding** — scripts and methodology exist; numbers in docs are targets, not measured GPU runs.
-- **Celery path is thin** — task retries exist at the decorator level, but there is no dead-letter queue or rich failure UX.
+- **Fine-tuned models exhibit catastrophic forgetting** due to narrow, single-vendor training data; base model is the production choice
+- **vendor_name extraction** is the main English golden bottleneck (F1 0.36 on base) — confuses vendor vs customer on some layouts
+- **No real Hindi training data** — relies on base model multilingual pretraining (synthetic eval only)
+- Relative benchmark F1 drop on run-002: **10.9%** (base 0.847 → FT 0.755); proves catastrophic forgetting
+- **GGUF quantization:** `scripts/quantize.py` path validated; conversion failed on Windows — Hub model path not resolved to local cache and `convert_hf_to_gguf.py` / `llama-quantize` toolchain not available. Serving benchmark uses unquantized Transformers base model (`experiments/bench_results_base.json`).
+- **QLoRA on 8 GB GPUs** — requires pinning `device_map={"": 0}` and closing other VRAM consumers
+- **`InferenceService`** loads real HF base/adapter models when path is a Hub ID or local checkpoint; empty dirs still use stub for API tests
+- **Human review batch** generated for 20 golden examples (`docs/human_review_batch.json`); 5/20 manually scored in `docs/human_review.md`
 
 ## Anything else I'd improve
 
