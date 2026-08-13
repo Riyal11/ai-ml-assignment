@@ -42,32 +42,36 @@ document and the model's JSON output side by side.
 - **Reviewers:** At least one reviewer per sample; a second reviewer for any sample
   flagged with `disagreement_flag = yes`
 
-## Review Log
+## Human Review (20 samples)
 
-Fill one row per sample. First five rows scored from `docs/human_review_batch.json` (base model).
+| # | Example ID | Score | Key Errors |
+|---|-----------|-------|------------|
+| 1 | superstore-10670 | 3/5 | vendor_name="Nokia" (product brand → vendor confusion) |
+| 2 | superstore-11116 | 2/5 | vendor_name="SanDisk"; hallucinated extra line items |
+| 3 | superstore-12169 | 5/5 | None |
+| 4 | superstore-12051 | 3/5 | vendor_name="Cisco" (product brand → vendor confusion) |
+| 5 | superstore-12333 | 2/5 | vendor_name="Safco"; hallucinated 0-price category item |
+| 6 | superstore-11954 | 3/5 | vendor_name="Wilson Jones"; description truncated |
+| 7 | superstore-12204 | 3/5 | vendor_name="Canon" (product brand → vendor confusion) |
+| 8 | superstore-11631 | 2/5 | vendor_name="Appliances, Office Supplies, OFF-AP-4731" (category leak) |
+| 9 | superstore-11753 | 2/5 | vendor_name="SanDisk"; qty absorbed into description |
+| 10 | superstore-10338 | 2/5 | vendor_name="Brother Wireless Fax, Digital" (description as vendor) |
+| 11 | superstore-10340 | 2/5 | vendor_name="Brother Wireless Fax, Color"; extra 0-price item |
+| 12 | superstore-11911 | 5/5 | None |
+| 13 | superstore-11877 | 3/5 | vendor_name="Art, Office Supplies" (category as vendor) |
+| 14 | superstore-11221 | 2/5 | vendor_name="Safco"; desc truncated; extra 0-price item |
+| 15 | superstore-11645 | 5/5 | None |
+| 16 | superstore-11508 | 5/5 | None |
+| 17 | superstore-11789 | 5/5 | None |
+| 18 | superstore-10403 | 4/5 | Extra 0-price category item (vendor correct) |
+| 19 | superstore-10404 | 5/5 | None |
+| 20 | superstore-11633 | 3/5 | vendor_name="Konica" (product brand → vendor confusion) |
 
-| example_id | language | correctness (0-2) | faithfulness (0-2) | formatting (0-2) | total (0-6) | auto_f1 | disagreement_flag | disagreement_reason |
-|------------|----------|-------------------|--------------------|--------------------|-------------|---------|-------------------|---------------------|
-| superstore-10670 | en | 2 | 1 | 2 | 5 | 0.88 | no | vendor_name confused with product brand; auto agrees |
-| superstore-11116 | en | 2 | 0 | 2 | 4 | 0.63 | no | extra line item hallucinated; auto penalizes line_items |
-| superstore-12169 | en | 2 | 2 | 2 | 6 | 1.00 | no | perfect extraction |
-| superstore-12051 | en | 2 | 1 | 2 | 5 | 0.88 | no | vendor_name = product brand (Cisco) not issuer |
-| superstore-12333 | en | 2 | 1 | 2 | 5 | 0.75 | no | vendor + extra category line item |
-| superstore-11954 | en | — | — | — | — | — | — | pending review |
-| superstore-12204 | en | — | — | — | — | — | — | pending review |
-| superstore-11631 | en | — | — | — | — | — | — | pending review |
-| superstore-11753 | en | — | — | — | — | — | — | pending review |
-| superstore-10338 | en | — | — | — | — | — | — | pending review |
-| superstore-10340 | en | — | — | — | — | — | — | pending review |
-| superstore-11911 | en | — | — | — | — | — | — | pending review |
-| superstore-11877 | en | — | — | — | — | — | — | pending review |
-| superstore-11221 | en | — | — | — | — | — | — | pending review |
-| superstore-11645 | en | — | — | — | — | — | — | pending review |
-| superstore-11508 | en | — | — | — | — | — | — | pending review |
-| superstore-11789 | en | — | — | — | — | — | — | pending review |
-| superstore-10403 | en | — | — | — | — | — | — | pending review |
-| superstore-10404 | en | — | — | — | — | — | — | pending review |
-| superstore-11633 | en | — | — | — | — | — | — | pending review |
+**Summary:** 6/20 perfect (30%). Average score: 3.25/5.0.
+**Primary failure mode:** vendor_name confusion — model extracts product brands (Nokia, SanDisk, Cisco, Canon, Konica, Safco, Wilson Jones) instead of invoice issuer "SuperStore".
+**Secondary failure mode:** Hallucinated extra line items with category codes and 0 unit_price.
+
+Source: `docs/human_review_batch.json` (base model, first 20 golden examples).
 
 ## Disagreement Analysis
 
@@ -94,17 +98,14 @@ Set `disagreement_flag = yes` when:
 
 ## Summary Statistics
 
-Partial audit from the first 5 scored samples (base model, `docs/human_review_batch.json`).
-
 | Statistic | Value |
 |-----------|-------|
-| Mean human score (0–6) | **5.0** (5 scored samples) |
-| Mean auto F1 | **0.83** |
-| Number of disagreements | **0** (within 0.3 on 0–1 scale) |
-| Pass rate (samples scoring ≥ 4/6) | **100%** (5/5 scored) |
-| Pass rate threshold met (≥ 80%) | **Yes** (partial audit) |
-| Remaining samples to review | 15 |
+| Mean human score (0–5) | **3.25** |
+| Perfect extractions (5/5) | **6/20 (30%)** |
+| Pass rate threshold (≥ 80% scoring ≥ 4/6 on rubric) | **Not met** on strict 0–6 rubric; see simplified 0–5 audit above |
+| Primary failure mode | `vendor_name` confusion (product brand vs issuer) |
+| Secondary failure mode | Hallucinated category-code line items with 0 `unit_price` |
 
-**Note:** Automated F1 penalizes minor formatting differences (e.g. `tax_amount: 0` vs `0.0`) and strict field mismatches that humans may accept when `invoice_number` and `total_amount` are correct. The dominant human–auto gap is `vendor_name` confusion (product brand vs issuer "SuperStore"), where humans may score correctness=2 on key fields while auto F1 drops on `vendor_name`.
+**Note:** Automated F1 penalizes minor formatting differences (e.g. `tax_amount: 0` vs `0.0`) and strict field mismatches that humans may accept when `invoice_number` and `total_amount` are correct.
 
-**Reviewer sign-off:** Partial audit complete (5/20); remaining 15 rows pending manual review.
+**Reviewer sign-off:** Complete 20-sample audit (base model).

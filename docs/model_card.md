@@ -76,8 +76,16 @@ Human review metrics (see `docs/human_review.md`):
 
 | Metric | Value | Threshold | Status |
 |--------|-------|-----------|--------|
-| Mean human score (0–6) | TBD | ≥ 4.0 | TBD |
-| Pass rate (≥ 4/6) | TBD | ≥ 80% | TBD |
+| Mean human score (0–5) | **3.25** | ≥ 4.0 | Below threshold |
+| Perfect extractions | **6/20 (30%)** | — | — |
+| Pass rate (≥ 4/6 on rubric) | Below 80% | ≥ 80% | Below threshold |
+
+**Qualitative assessment (20 samples, base model):**
+
+- Human review score: **3.25/5.0** (20 samples)
+- Perfect extractions: **6/20 (30%)**
+- Top error: **vendor_name** confusion (product brand mistaken for invoice issuer)
+- Secondary error: hallucinated category-code line items with **0** `unit_price`
 
 ## Evaluation Data
 
