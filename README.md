@@ -14,6 +14,8 @@ but degraded golden-set performance and is documented as a negative result.
 | Hindi eval F1 (synthetic) | **0.960** | — |
 | Human review (20 samples) | **3.25/5.0** (6 perfect) | — |
 
+† Run-001 (r=8, 3 epochs): F1 0.72, EM 0.74 — also below base model. See `docs/training_diary.md` for full comparison.
+
 **Note:** Fine-tuned (run-002) results are shown only for the golden-set F1 and benchmark forgetting evaluations, which were sufficient to reject the model for deployment (F1 0.738 < 0.85 threshold, 10.9% catastrophic forgetting). Schema validity on FT is 100% (see `docs/model_card.md`); Hindi eval and human review were not run on FT after the golden F1 gate failure.
 
 See `SUMMARY.md` for trade-offs, `docs/model_card.md` for go/no-go gates, and
@@ -125,7 +127,7 @@ docker run -d -p 6379:6379 redis:alpine
 |----------|---------|-------------|
 | `DOCEXTRACT_MODEL_PATH` | `artifacts/merged-model` | HF Hub ID, local model dir, PEFT adapter, or GGUF file |
 | `DOCEXTRACT_MODEL_ID` | `docextract-qwen3-4b` | Id returned by `/v1/models` |
-| `DOCEXTRACT_QUANTIZATION` | `none` | Serving backend (`none`, `gguf`) |
+| `DOCEXTRACT_QUANTIZATION` | `none` | Serving backend (`none`, `gguf` (not available — see `docs/model_card.md`)) |
 | `CELERY_BROKER_URL` | unset | When set, quantization jobs run via Celery; otherwise sync fallback |
 
 Endpoints: `GET /health`, `GET /v1/models`, `POST /v1/chat/completions` (JSON or SSE), `POST /extract`, `POST /v1/jobs/quantize`, `GET /v1/jobs/{job_id}`.

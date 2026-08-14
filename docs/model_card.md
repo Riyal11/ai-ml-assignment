@@ -70,7 +70,9 @@ thresholds in `docs/acceptance_criteria.md`. Results from `experiments/eval-base
 | Field-level F1 | **0.857** | 0.738 | ≥ 0.85 | **Base passes; FT fails** |
 | Exact Match | **0.910** | 0.766 | ≥ 0.75 | Pass (base) |
 | Catastrophic Forgetting (relative F1 drop on benchmark) | — | **10.9%** (retention 0.89) | ≤ 5% | **FT fails; evidence of forgetting** |
-| Hindi F1 (synthetic eval, 50 ex) | **0.960** | — | ≤ 0.05 gap vs EN | Pass (base multilingual) |
+| Hindi F1 (synthetic eval, 50 ex) | **0.960** | — | ≥ EN F1 − 0.05 (Hindi must not lag English by more than 0.05) | Pass (base multilingual) |
+
+† Hindi F1 (0.960) exceeds English F1 (0.857), so the directional threshold is satisfied.
 
 Human review metrics (see `docs/human_review.md`):
 

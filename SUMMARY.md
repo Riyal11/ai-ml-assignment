@@ -28,7 +28,7 @@ environment. Only unquantized base benchmark results are included
 
 ## Recommended follow-on work
 
-- Run real LoRA/QLoRA sweeps and fill `docs/training_diary.md` with incidents, not templates.
+- Run real LoRA/QLoRA sweeps with more diverse data.
 - Add a vLLM (or SGLang) serving backend for higher throughput and proper TTFT measurement.
 - Deep-dive Hindi/Devanagari tokenization (numeral fertility, chat-template quirks) instead of leaving the TODO in `tokenizer_utils`.
 - Multi-page / long-invoice path: chunking or >32K context strategy with citation of which pages fed extraction.

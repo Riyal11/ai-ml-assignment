@@ -1,17 +1,5 @@
 # Training Diary
 
-## Incident Template
-
-Use this template for every training instability, tokenization mismatch, or structured-output failure.
-
-### Run ID: <run_id>
-- **Category**: instability | tokenization | structured-output
-- **Observed**: What you saw (metrics, traceback, sample bad outputs)
-- **Diagnosis**: How you isolated the cause
-- **Change**: What you changed (config, code, data formatting)
-- **Follow-up Run ID**: The run that validates the fix
-- **Status**: open | resolved
-
 ## Incidents
 
 ### Incident 001: Empty Placeholder PDFs in SuperStore Dataset
@@ -105,7 +93,7 @@ Examined failed PDFs manually — they are empty placeholder/stub files. Filenam
 - **Observed**: Golden-set comparison after run-002 completed:
   - **Base** (`Qwen/Qwen3-4B-Instruct-2507`, no adapter): schema **100%**, EM **0.91**, F1 **0.86** (`experiments/eval-base/results.json`)
   - **Run-001** (r=8, 3 epochs): F1 **0.72**, EM **0.74**
-  - **Run-002** (r=16, 5 epochs): F1 **0.74**, EM **0.77** (`experiments/eval-ft-run-002/results.json`)
+  - **Run-002** (r=16, 5 epochs): F1 **0.74**, EM **0.77** (`experiments/eval-ft-run-002-v2/results.json`)
   Training loss improved (run-001 `0.29` → run-002 `0.24`) but golden F1 **decreased** vs base by **~0.12**.
 - **Diagnosis**: Base instruct model already extracts valid schema JSON on SuperStore golden; QLoRA SFT on 830 English invoices appears to **hurt** field-level accuracy (possible overfit to training layout, degraded `vendor_name` / `line_items`). Per-field on base: `vendor_name` F1 **0.36** (bottleneck), `line_items` F1 **0.76**; scalar money/date/currency fields at **1.0**. Gap is not fixed by higher rank or more epochs alone.
 - **Change**: **Do not promote run-002** for merge/quantize/submission. Use **base model** for quality gate and model card (conditional go: fine-tuning documented but not deployed). Run-002 artifacts retained for assignment evidence.
@@ -114,7 +102,7 @@ Examined failed PDFs manually — they are empty placeholder/stub files. Filenam
 
 ## Training Runs
 
-### Run 001: First QLoRA Training — SUCCESS
+### Run 001: First QLoRA Training — Completed (Golden F1 0.72, Below 0.85 Gate)
 
 | Setting | Value |
 |---------|-------|

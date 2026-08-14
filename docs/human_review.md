@@ -69,19 +69,19 @@ where `disagreement_flag = yes` and record the reason.
 
 | Pattern | Automated signal | Human signal | Likely cause |
 |---------|------------------|--------------|--------------|
-| Normalization mismatch | Auto F1 = 1.0 | Correctness ≤ 1 | Date format (`2025-6-5` vs `2025-06-05`), whitespace, or decimal representation differs from gold but human accepts the extraction |
-| Semantic equivalence | Auto F1 = 0.0 | Correctness ≥ 1 | Strict exact match penalizes paraphrased vendor names or equivalent numeric forms (`1000` vs `1,000.00`) that a human would accept |
-| Schema vs parseability | Formatting = 2 | Schema validity = fail | Model output is parseable JSON but misses required keys or uses wrong types — human sees clean JSON, automated gate rejects |
-| Line-item alignment | Auto F1 low on `line_items` | Correctness high | Index-based line-item matching in metrics misaligns reordered but correct items |
-| Hindi tokenization | Auto F1 moderate | Correctness high | Devanagari text extracted correctly but tokenizer/normalization causes field-level mismatch |
+| Normalization mismatch | Auto F1 = 1.0 | Human score ≤ 4/5 | Date format (`2025-6-5` vs `2025-06-05`), whitespace, or decimal representation differs from gold but human accepts the extraction |
+| Semantic equivalence | Auto F1 = 0.0 | Human score ≥ 3/5 | Strict exact match penalizes paraphrased vendor names or equivalent numeric forms (`1000` vs `1,000.00`) that a human would accept |
+| Schema vs parseability | Schema validity = fail | Human score ≥ 4/5 | Model output is parseable JSON but misses required keys or uses wrong types — human sees clean JSON, automated gate rejects |
+| Line-item alignment | Auto F1 low on `line_items` | Human score ≥ 3/5 | Index-based line-item matching in metrics misaligns reordered but correct items |
+| Hindi tokenization | Auto F1 moderate | Human score ≥ 3/5 | Devanagari text extracted correctly but tokenizer/normalization causes field-level mismatch |
 
 ### When to flag disagreement
 
 Set `disagreement_flag = yes` when:
 
-- Human total score differs from auto F1 by more than 0.3 (on the 0–1 scale), or
-- Human formatting score is 2 but `schema_validity_rate` marks the sample invalid, or
-- Human correctness is ≤ 1 but auto F1 ≥ 0.9
+- Human total score (0–5) differs from auto F1 (scaled 0–1) by more than 0.3, or
+- Human score is ≥ 4/5 but `schema_validity_rate` marks the sample invalid, or
+- Human score is ≤ 2/5 but auto F1 ≥ 0.9
 
 ## Summary Statistics
 
