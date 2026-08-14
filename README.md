@@ -135,6 +135,7 @@ Endpoints: `GET /health`, `GET /v1/models`, `POST /v1/chat/completions` (JSON or
 **Note:** `InferenceService` loads real weights for Hub IDs and valid local checkpoints.
 Empty or missing local paths use a stub predictor (for API tests). GGUF quantization was
 attempted but not completed on Windows — see `SUMMARY.md` and `docs/model_card.md`.
+GGUF path exists in code for future completion; currently falls back to unquantized Transformers.
 
 ## Tests
 

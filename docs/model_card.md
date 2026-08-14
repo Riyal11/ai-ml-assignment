@@ -74,6 +74,8 @@ thresholds in `docs/acceptance_criteria.md`. Results from `experiments/eval-base
 
 † Hindi F1 (0.960) exceeds English F1 (0.857), so the directional threshold is satisfied.
 
+‡ EM is example-level (all fields must match); F1 is micro-averaged across all field instances including nested line-item fields. EM can exceed F1 when line-item arrays contain many sub-fields.
+
 Human review metrics (see `docs/human_review.md`):
 
 | Metric | Value | Threshold | Status |

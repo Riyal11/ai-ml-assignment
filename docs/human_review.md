@@ -79,7 +79,7 @@ where `disagreement_flag = yes` and record the reason.
 
 Set `disagreement_flag = yes` when:
 
-- Human total score (0–5) differs from auto F1 (scaled 0–1) by more than 0.3, or
+- Normalized human score (score / 5) differs from auto F1 by more than 0.3, or
 - Human score is ≥ 4/5 but `schema_validity_rate` marks the sample invalid, or
 - Human score is ≤ 2/5 but auto F1 ≥ 0.9
 

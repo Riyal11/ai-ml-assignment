@@ -149,9 +149,11 @@ Post-training evaluation on golden and synthetic Hindi sets (`scripts/evaluate.p
 - No Hindi training data needed for this assignment.
 - Qwen3-4B base model handles Devanagari via pretraining.
 
+**Note:** This 5-example sanity check was exploratory. The canonical Hindi eval is 50 synthetic examples on the base model (see `experiments/eval-base-hindi/`).
+
 **Next steps:** Focus improvement on English complexity via more epochs / higher rank.
 
-### Run 002: QLoRA r=16 Restart — SUCCESS (eval regression)
+### Run 002: QLoRA r=16 Restart — Completed (eval regression, below all gates)
 
 | Setting | Value |
 |---------|-------|
@@ -194,7 +196,7 @@ Post-training evaluation on golden and synthetic Hindi sets (`scripts/evaluate.p
 - Fine-tuned model golden F1: **0.738** (fails threshold)
 - Delta: **−11.9%** F1, **−14.3%** Exact Match
 - Benchmark forgetting: base F1 **0.847** → run-002 F1 **0.755** (**10.9%** relative drop; threshold ≤ 5%)
-- Per-field (golden): `vendor_name` base **0.36** → run-002 **0.00**; `line_items` base **0.76** → run-002 **0.67**
+- Per-field (golden): `vendor_name` base **0.36** → run-002 **0.00**; `line_items` base **0.76** → run-002 **0.67**; `tax_amount` base **1.00** → run-002 **0.42**
 
 **Diagnosis:**
 
@@ -202,6 +204,7 @@ Post-training evaluation on golden and synthetic Hindi sets (`scripts/evaluate.p
 - Model learned degenerate shortcut: `vendor_name` is always "SuperStore"
 - Lost general capability to extract vendor names from diverse documents
 - `line_items` extraction also degraded (nested array overfitting)
+- `tax_amount` also degraded severely (F1 1.00 → 0.42), likely because the model learned to emit 0 (integer) instead of 0.0 (float) or omitted the field when no tax was present.
 
 **Change:**
 
