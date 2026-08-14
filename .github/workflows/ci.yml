@@ -1,5 +1,9 @@
 name: CI
 
+# Note: This workflow runs lint, unit tests, and a fixture-based quality gate.
+# Real model evaluation (Qwen3-4B, ~7GB) requires GPU and is run locally.
+# The quality-gate job validates gate logic against known-passing fixtures.
+
 on:
   push:
     branches: [main, master]
